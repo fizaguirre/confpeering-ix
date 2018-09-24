@@ -7,6 +7,7 @@ if (Meteor.isClient) {
 
   Deps.autorun(function(){
     Meteor.subscribe('offers');
+    Meteor.subscribe('users');
   });
 
   Template.hello.greeting = function () {
@@ -62,6 +63,7 @@ if (Meteor.isClient) {
         function(error) {
           if(Meteor.user()){
             console.log(Meteor.user());
+            console.log(Principal.user());
           }
           else {
             console.log(error.reason);
@@ -98,8 +100,8 @@ if (Meteor.isClient) {
   });
 
   Template.offer.offers = function() {
-    //return Offers.find({createdBy:Meteor.userId()});
-    return Offers.find();
+    return Offers.find({createdBy:Meteor.userId()});
+    //return Offers.find();
   };
 
 }
