@@ -7,6 +7,8 @@
   		{{> hello}}
   		{{> registerAnOffer}}
 		{{> offer}}
+		<br>
+		<br>
   		{{else}}
   		<p><h1>Register as a user</h1></p>
   		{{> register}}
@@ -16,42 +18,101 @@
 </body>
 
 <template name="hello">
-  <h1>Welcome to Dynamix!</h1>
+  <h1>Welcome to Dynamix!</h1><br>
+  {{#if currentUser}}
+  <h4>{{user.username}}</h4>
+  {{/if}}
   <button class="logout">Logout</button>
 </template>
 
 <template name="register">
 	<form>
-		<label for="emailReg">Email</label><br>
+		<label for="emailReg">Email</label>
 		<input type="text" name="emailReg"><br>
-		<label for="passlReg">Password</label><br>
+		<label for="passlReg">Password</label>
 		<input type="password" name="passlReg"><br>
-		<input type="submit" name="registerSubmit"><br>
+		<input type="submit" name="registerSubmit" value="Register"><br>
 	</form>
 </template>
 
 <template name="login">
 	<form>
-		<label for="emailLogin">Email</label><br>
+		<label for="emailLogin">Email</label>
 		<input type="text" name="emailLogin"><br>
-		<label for="passwordLogin">Password</label><br>
+		<label for="passwordLogin">Password</label>
 		<input type="password" name="passwordLogin"><br>
-		<input type="submit" name="loginSubmit"><br>
+		<input type="submit" name="loginSubmit" value="Login"><br>
 	</form>
 </template>
 
 <template name="registerAnOffer">
 	<form>
-		<p>Register an offer</p>
+		<h4>Register an offer</h4>
+		<label for="aspath">aspath*</label>
+		<input type="text" pattern="[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}/[0-9]{1,2}" name="aspath">
+		<label for="bwidth">bwidth</label>
+		<input type="text" name="bwidth">
+		<label for="latency">latency</label>
+		<input type="text" name="latency">
+		<label for="pkt_loss">pkt_loss</label>
+		<input type="text" name="pkt_loss">
+		<label for="jitter">jitter</label>
+		<input type="text" name="jitter">
+		<label for="repair">repair</label>
+		<input type="text" name="repair">
+		<label for="guarantee">guarantee</label>
+		<input type="text" name="guarantee">
+		<label for="availability">availability</label>
+		<input type="text" name="availability"><label for="billing">billing</label>
+		<input type="text" name="billing">
+		<label for="ingress">ingress</label>
+		<input type="text" name="ingress">
+		<label for="egress">egress</label>
+		<input type="text" name="egress">
+		<label for="lengh">lengh</label>
+		<input type="text" name="lengh">
+		<br>
+		<input type="submit" name="registerOfferSubmit" value="Register offer">
+		<!--	
 		<label for="aspath">AS Path</label><br>
 		<input type="text" name="aspath"><br>
 		<input type="submit" name="registerOfferSubmit"><br>
+		-->
 	</form>
 </template>
 
 <template name="offer">
 	<p><h2>Offers</h2><p>
-	{{#each offers}}
-		{{aspath}} {{createAt}}<br>
-	{{/each}}
+	<table border=1>
+		<tr>
+			<th><label>aspath</label></th>
+			<th><label>bwidth</label></th>
+			<th><label>latency</label></th>
+			<th><label>pkt_loss</label></th>
+			<th><label>jitter</label></th>
+			<th><label>repair</label></th>
+			<th><label>guarantee</label></th>
+			<th><label>availability</label></th>
+			<th><label>billing</label></th>
+			<th><label>ingress</label></th>
+			<th><label>egress</label></th>
+			<th><label>lengh</label><</th>			
+		</tr>
+		{{#each offers}}
+		<tr>
+			<td>{{aspath}}</td>
+			<td>{{bwidth}}</td>
+			<td>{{latency}}</td>
+			<td>{{pkt_loss}}</td>
+			<td>{{jitter}}</td>
+			<td>{{repair}}</td>
+			<td>{{guarantee}}</td>
+			<td>{{availability}}</td>
+			<td>{{billing}}</td>
+			<td>{{ingress}}</td>
+			<td>{{egress}}</td>
+			<td>{{lengh}}</td>
+		</tr>
+		{{/each}}
+	</table>
 </template>

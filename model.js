@@ -1,7 +1,18 @@
 Offers = new Meteor.Collection('offers');
 
 Offers._encrypted_fields({
-  'aspath' : {princ: 'asprinc', princtype: 'as', auth: ['_id']}
+  'aspath'        :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
+  'bwidth'        :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
+  'latency'       :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
+  'pkt_loss'      :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
+  'jitter'        :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
+  'repair'        :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
+  'guarantee'     :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
+  'availability'  :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
+  'billing'       :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
+  'ingress'       :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
+  'egress'        :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
+  'lengh'         :{princ: 'asprinc', princtype: 'as', auth: ['_id']}
 });
 
 function ferr(e)

@@ -76,7 +76,20 @@ if (Meteor.isClient) {
     'submit form': function(evt) {
       evt.preventDefault();
 
+
       _aspath = evt.target.aspath.value;
+      _bwidth = evt.target.bwidth.value;
+      _latency = evt.target.latency.value;
+      _pkt_loss = evt.target.pkt_loss.value;
+      _jitter = evt.target.jitter.value;
+      _repair = evt.target.repair.value;
+      _guarantee = evt.target.guarantee.value;
+      _availability = evt.target.availability.value;
+      _billing = evt.target.billing.value;
+      _ingress = evt.target.ingress.value;
+      _egress = evt.target.egress.value;
+      _lengh = evt.target.lengh.value;
+
       _userId = Meteor.user().userId;
       _createdAt = '';
 
@@ -90,18 +103,40 @@ if (Meteor.isClient) {
                             userId: _userId,
                             asprinc: userPrincipal.id,
                             aspath: _aspath,
+                            bwidth: _bwidth,
+                            latency: _latency,
+                            pkt_loss: _pkt_loss,
+                            jitter: _jitter,
+                            repair: _repair,
+                            guarantee: _guarantee,
+                            availability: _availability,
+                            billing: _billing,
+                            ingress: _ingress,
+                            egress: _egress,
+                            lengh: _lengh,
                             createdBy: Meteor.userId(),
                             createdAt: + new Date()
                             });
                         });
 
       evt.target.aspath.value = '';
+      evt.target.bwidth.value = '';
+      evt.target.latency.value = '';
+      evt.target.pkt_loss.value = '';
+      evt.target.jitter.value = '';
+      evt.target.repair.value = '';
+      evt.target.guarantee.value = '';
+      evt.target.availability.value = '';
+      evt.target.billing.value = '';
+      evt.target.ingress.value = '';
+      evt.target.egress.value = '';
+      evt.target.lengh.value= '';
     }
   });
 
   Template.offer.offers = function() {
-    return Offers.find({createdBy:Meteor.userId()});
-    //return Offers.find();
+    //return Offers.find({createdBy:Meteor.userId()});
+    return Offers.find();
   };
 
 }
