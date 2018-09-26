@@ -134,6 +134,24 @@ if (Meteor.isClient) {
     }
   });
 
+  Template.shareOffers.events({
+    'submit form': function(evt) {
+      evt.preventDefault();
+      Principal.lookup([new PrincAttr("as", "as_" + Meteor.user().username + "_offers")],
+                        Meteor.user().username,
+                        function(offersPrinciple) {
+                          Principal.lookupUser(evt.target.as_share.value,
+                            function(asSharePrinciple) {
+                              Principal.add_access(asSharePrinciple, offersPrinciple,
+                                function() {
+                                  evt.target.as_share.value = '';
+                                  console.log("Access added");
+                                })
+                            })
+                        });
+    }
+  });
+
   Template.offer.offers = function() {
     //return Offers.find({createdBy:Meteor.userId()});
     return Offers.find();
