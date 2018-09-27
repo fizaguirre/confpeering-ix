@@ -8,6 +8,7 @@ if (Meteor.isClient) {
   Deps.autorun(function(){
     Meteor.subscribe('offers');
     Meteor.subscribe('users');
+    Meteor.subscribe('ases');
   });
 
   Template.hello.greeting = function () {

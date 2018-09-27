@@ -1,4 +1,5 @@
 Offers = new Meteor.Collection('offers');
+Ases   = new Meteor.Collection('ases');
 
 Offers._encrypted_fields({
   'aspath'        :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
@@ -56,6 +57,23 @@ if (Meteor.isServer) {
   remove: function (userId, doc) {
       //return doc.createdByID === userId;
       return true;
+  }
+  });
+
+  Ases.allow({
+  // anyone can insert a new room
+  insert: function (userId, doc) {
+      return true;
+  },
+  // only owner can change room
+  update: function (userId, doc, fields, modifier) {
+      //return doc.createdByID === userId;
+      return true;
+  },
+  // only owner can remove room
+  remove: function (userId, doc) {
+      //return doc.createdByID === userId;
+      return false;
   }
   });
 }
