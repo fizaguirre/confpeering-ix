@@ -3,8 +3,9 @@ Meteor.publish("offers", function(){
 	var ases = [];
 
 	try{
-		oferers = Ases.findOne({as_id:this.userId}).as_oferers;		
-		ases  = ases.concat(oferers);
+		if(as = Ases.findOne({as_id:this.userId})){
+			ases  = ases.concat(as.as_oferers);
+		}
 	}
 	catch(err) {
 		console.info(err);
@@ -21,10 +22,10 @@ Meteor.publish("users", function() {
   return Meteor.users.find({}, {fields: {}});
 });
 
-Meteor.publish("ases", function() { 
-  //return Ases.find({as_id:this.userId});
-  return Ases.find();
-});
+/*Meteor.publish("ases", function() { 
+  return Ases.find({as_id:this.userId});
+  //return Ases.find();
+});*/
 
 Meteor.methods({
 	'ShareOffers': function(asIDOferer, asIDClient) {
