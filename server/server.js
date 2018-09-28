@@ -1,8 +1,18 @@
 Meteor.publish("offers", function(){
 	//db.ases.find({ "as_id": { $in: ["1","2"] } } );
-	var ases = Ases.find({as_id:this.userId});
-	console.info(ases.as_oferers);
-	//return Offers.find({createdBy:{$in : ases}});
+	var ases = [];
+
+	try{
+		oferers = Ases.findOne({as_id:this.userId}).as_oferers;		
+		ases  = ases.concat(oferers);
+	}
+	catch(err) {
+		console.info(err);
+	}
+	
+	ases.push(this.userId);
+	console.info("looking.. " + ases);
+	return Offers.find({createdBy:{$in : ases}});
     //return Offers.find({createdBy:this.userId});
     //return Offers.find();
   });
@@ -12,7 +22,8 @@ Meteor.publish("users", function() {
 });
 
 Meteor.publish("ases", function() { 
-  return Meteor.ases.find({as_id:this.userId});
+  //return Ases.find({as_id:this.userId});
+  return Ases.find();
 });
 
 Meteor.methods({
