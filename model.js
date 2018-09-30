@@ -1,8 +1,14 @@
 Offers = new Meteor.Collection('offers');
 Ases   = new Meteor.Collection('ases');
 
-Offers._encrypted_fields({
-  'aspath'        :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
+search_enable = function() {
+  return (typeof MYLAR_USE_SEARCH != "undefined");
+}
+
+if(search_enable()) {
+  console.info("Search enable");
+  Offers._encrypted_fields({
+  'aspath'        :{princ: 'asprinc', princtype: 'as', attr: 'SEARCHABLE', auth: ['_id']},
   'bwidth'        :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
   'latency'       :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
   'pkt_loss'      :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
@@ -15,6 +21,24 @@ Offers._encrypted_fields({
   'egress'        :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
   'lengh'         :{princ: 'asprinc', princtype: 'as', auth: ['_id']}
 });
+} else {
+  console.info("Search disable");
+  Offers._encrypted_fields({
+    'aspath'        :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
+    'bwidth'        :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
+    'latency'       :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
+    'pkt_loss'      :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
+    'jitter'        :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
+    'repair'        :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
+    'guarantee'     :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
+    'availability'  :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
+    'billing'       :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
+    'ingress'       :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
+    'egress'        :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
+    'lengh'         :{princ: 'asprinc', princtype: 'as', auth: ['_id']}
+  });
+}
+
 
 function ferr(e)
 {
@@ -76,4 +100,32 @@ if (Meteor.isServer) {
       return false;
   }
   });
+
+  filter = function(userID) {
+    var ases = [];
+    ases.push({createdBy: userID});
+
+    //Looking for ASes it has access to
+    try{
+      if(as = Ases.findOne({as_id:userID})){
+        //ases  = ases.concat(as.as_oferers);
+        _.each(as.as_oferers, function(as) {
+          ases.push({createdBy: as});
+        });
+      }
+    }
+    catch(err) {
+      console.info(err);
+    }
+    
+    _.each(ases, function(as){
+      console.log("adding as " + as);
+    })
+    //return Offers.find({createdBy:{$in : ases}});
+    return ases;
+  }
+
+  if(search_enable()) {
+    Offers.publish_search_filter("search-offers", filter);
+  }
 }

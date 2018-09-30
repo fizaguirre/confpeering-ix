@@ -3,6 +3,8 @@ function ferr(e)
   console.log(e);
 }
 
+var searchKey = '';
+
 if (Meteor.isClient) {
 
   Deps.autorun(function(){
@@ -91,7 +93,7 @@ if (Meteor.isClient) {
       _egress = evt.target.egress.value;
       _lengh = evt.target.lengh.value;
 
-      _userId = Meteor.user().userId;
+      _userId = Meteor.userId();
       _createdAt = '';
 
       //Meteor.call('getServerTime', function(e, r) { _createdAt = r; });
@@ -115,7 +117,7 @@ if (Meteor.isClient) {
                             ingress: _ingress,
                             egress: _egress,
                             lengh: _lengh,
-                            createdBy: Meteor.userId(),
+                            createdBy: _userId,
                             createdAt: + new Date()
                             });
                         });
@@ -159,6 +161,27 @@ if (Meteor.isClient) {
     }
     evt.target.as_share.value = "";
     
+    }
+  });
+
+  displayResults = function() {
+    console.log("search happend");
+  }
+
+  Template.searchOffersResult.offersResult = function() {
+    var search_tag = Session.get("search_tag");
+    if(search_tag) {    
+        return Offers.find({_tag : search_tag});
+    }
+    return Offers.find({_tag: "nothing"});
+  }
+
+  Template.searchOffers.events({
+    'submit form': function(evt) {
+      evt.preventDefault();
+      var searchField = evt.target.aspath3.value;
+      Offers.search("search-offers", {aspath: searchField}, Principal.user(), Meteor.userId(), displayResults);
+      console.log("Searching "+ searchField);
     }
   });
 

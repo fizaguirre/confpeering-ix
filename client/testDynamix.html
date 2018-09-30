@@ -4,10 +4,36 @@
 
 <body>
 	{{#if currentUser}}
-  		{{> hello}}
-  		{{> registerAnOffer}}
-		{{> offer}}
-		{{> shareOffers}}
+	{{> hello}}
+  		<table border=1>
+  			<tr>
+  				<td>
+  					{{> registerAnOffer}}
+  				</td>
+  				<td>
+  					<table border=1>
+  						<tr>
+  							<td >
+  								{{> offer}}
+  							</td>
+  						</tr>
+  						<tr>
+  							<td>
+  								{{> shareOffers}}
+  							</td>
+  						</tr>
+  					</table>
+  				</td>
+  			</tr>
+  			<tr>
+  				<td>
+  					{{> searchOffers}}
+  				</td>
+  				<td>
+  					{{> searchOffersResult}}
+  				</td>
+  			</tr>
+  		</table>
 		<br>
 		<br>
   		{{else}}
@@ -50,7 +76,10 @@
 	<form>
 		<h4>Register an offer</h4>
 		<label for="aspath">aspath*</label>
+		<!--
 		<input type="text" pattern="[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}/[0-9]{1,2}" name="aspath">
+		-->
+		<input type="text" name="aspath">
 		<label for="bwidth">bwidth</label>
 		<input type="text" name="bwidth">
 		<label for="latency">latency</label>
@@ -74,11 +103,6 @@
 		<input type="text" name="lengh">
 		<br>
 		<input type="submit" name="registerOfferSubmit" value="Register offer">
-		<!--	
-		<label for="aspath">AS Path</label><br>
-		<input type="text" name="aspath"><br>
-		<input type="submit" name="registerOfferSubmit"><br>
-		-->
 	</form>
 </template>
 
@@ -86,6 +110,7 @@
 	<p><h2>Offers</h2><p>
 	<table border=1>
 		<tr>
+			<th><label>user</label></th>
 			<th><label>aspath</label></th>
 			<th><label>bwidth</label></th>
 			<th><label>latency</label></th>
@@ -101,6 +126,7 @@
 		</tr>
 		{{#each offers}}
 		<tr>
+			<td>{{userId}}</td>
 			<td>{{aspath}}</td>
 			<td>{{bwidth}}</td>
 			<td>{{latency}}</td>
@@ -125,4 +151,52 @@
 		<input type="text" name="as_share">
 		<input type="submit" name="shareOffersSubmit" value="Share">
 	</form>
+</template>
+
+<template name="searchOffers">
+	<form>
+		<h4>Search for an offer</h4>
+		<label for="aspath3">aspath*</label>
+		<input type="text" name="aspath3">
+		<br>
+		<input type="submit" name="searchOffersSubmit" value="Search">
+	</form>
+</template>
+
+<template name="searchOffersResult">
+	<p><h2>Search Result</h2><p>
+	<table border=1>
+		<tr>
+			<th><label>user</label></th>
+			<th><label>aspath</label></th>
+			<th><label>bwidth</label></th>
+			<th><label>latency</label></th>
+			<th><label>pkt_loss</label></th>
+			<th><label>jitter</label></th>
+			<th><label>repair</label></th>
+			<th><label>guarantee</label></th>
+			<th><label>availability</label></th>
+			<th><label>billing</label></th>
+			<th><label>ingress</label></th>
+			<th><label>egress</label></th>
+			<th><label>lengh</label><</th>			
+		</tr>
+		{{#each offersResult}}
+		<tr>
+			<td>{{userId}}</td>
+			<td>{{aspath}}</td>
+			<td>{{bwidth}}</td>
+			<td>{{latency}}</td>
+			<td>{{pkt_loss}}</td>
+			<td>{{jitter}}</td>
+			<td>{{repair}}</td>
+			<td>{{guarantee}}</td>
+			<td>{{availability}}</td>
+			<td>{{billing}}</td>
+			<td>{{ingress}}</td>
+			<td>{{egress}}</td>
+			<td>{{lengh}}</td>
+		</tr>
+		{{/each}}
+	</table>
 </template>
