@@ -118,10 +118,9 @@ if (Meteor.isServer) {
       console.info(err);
     }
     
-    _.each(ases, function(as){
+    /*_.each(ases, function(as){
       console.log("adding as " + as);
-    })
-    //return Offers.find({createdBy:{$in : ases}});
+    })*/
     return ases;
   }
 

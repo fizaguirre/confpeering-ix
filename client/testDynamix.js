@@ -140,26 +140,31 @@ if (Meteor.isClient) {
   Template.shareOffers.events({
     'submit form': function(evt) {
       evt.preventDefault();
-      Principal.lookup([new PrincAttr("as", "as_" + Meteor.user().username + "_offers")],
-                        Meteor.user().username,
-                        function(offersPrinciple) {
-                          Principal.lookupUser(evt.target.as_share.value,
-                            function(asSharePrinciple) {
-                              Principal.add_access(asSharePrinciple, offersPrinciple,
-                                function() {
-                                  evt.target.as_share.value = '';
-                                  console.log("Access granted");
-                                })
+
+      partnerUserId = Meteor.users.findOne({username: evt.target.as_share.value});
+
+      if(partnerUserId) {
+        Principal.lookup([new PrincAttr("as", "as_" + Meteor.user().username + "_offers")],
+                    Meteor.user().username,
+                    function(offersPrinciple) {
+                      Principal.lookupUser(evt.target.as_share.value,
+                        function(asSharePrinciple) {
+                          Principal.add_access(asSharePrinciple, offersPrinciple,
+                            function() {
+                              evt.target.as_share.value = '';
+                              console.log("Access granted");
                             })
-                        });
+                        })
+                    });
 
-    partnerUserId = Meteor.users.findOne({username: evt.target.as_share.value});
-
-    if(partnerUserId) {
-      Meteor.call('ShareOffers', Meteor.userId(), partnerUserId._id);
-      console.log("Added " + partnerUserId._id + "to partners.");
-    }
-    evt.target.as_share.value = "";
+        Meteor.call('ShareOffers', Meteor.userId(), partnerUserId._id);
+        console.log("Added " + partnerUserId._id + "to partners.");
+      }
+      else
+      {
+        alert("AS user does not exist");
+      }
+      evt.target.as_share.value = "";
     
     }
   });
