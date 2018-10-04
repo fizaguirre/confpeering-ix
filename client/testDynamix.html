@@ -14,9 +14,9 @@
   					{{> registerAnOffer}}
   				</td>
   				<td>
-  					<table border=1>
-  						<tr>
-  							<td >
+  					<table border=1 >
+  						<tr valign="top">
+  							<td>
   								{{> offer}}
   							</td>
   						</tr>
@@ -37,6 +37,7 @@
   				</td>
   			</tr>
   		</table>
+  		{{> receivedIntents}}
 		<br>
 		<br>
   		{{else}}
@@ -110,7 +111,7 @@
 </template>
 
 <template name="offer">
-	<p><h2>Offers</h2><p>
+	<p><h2>My Offers</h2><p>
 	<table border=1>
 		<tr>
 			<th><label>user</label></th>
@@ -182,7 +183,8 @@
 			<th><label>billing</label></th>
 			<th><label>ingress</label></th>
 			<th><label>egress</label></th>
-			<th><label>lengh</label><</th>			
+			<th><label>lengh</label><</th>
+			<th><label>Intent</label></th>
 		</tr>
 		{{#each offersResult}}
 		<tr>
@@ -199,7 +201,28 @@
 			<td>{{ingress}}</td>
 			<td>{{egress}}</td>
 			<td>{{lengh}}</td>
+			<td><button>Send an intent</button></td>
 		</tr>
 		{{/each}}
+	</table>
+</template>
+
+<template name="receivedIntents">
+	<h3>Intents</h3>
+	<table border=1>
+		<th><label>AS</label></th>
+		<th><label>aspath</label></th>
+		<th><label>bwidth</label></th>
+		<th><label>latency</label></th>
+		<th><label>pkt_loss</label></th>
+		<th><label>jitter</label></th>
+		<th><label>repair</label></th>
+		<th><label>guarantee</label></th>
+		<th><label>availability</label></th>
+		<th><label>billing</label></th>
+		<th><label>ingress</label></th>
+		<th><label>egress</label></th>
+		<th><label>lengh</label><</th>
+		<th><label>Intent</label></th>
 	</table>
 </template>
