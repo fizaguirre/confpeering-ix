@@ -1,5 +1,11 @@
 Offers = new Meteor.Collection('offers');
 Ases   = new Meteor.Collection('ases');
+ProposalStates = new Meteor.Collection('proposalstates');
+ContractStates = new Meteor.Collection('contractsatates');
+WorkflowActions = new Meteor.Collection('workflowactions');
+Proposals = new Meteor.Collection('proposals');
+Contracts = new Meteor.Collection('contracts');
+
 
 search_enable = function() {
   return (typeof MYLAR_USE_SEARCH != "undefined");
@@ -37,6 +43,130 @@ if(search_enable()) {
     'egress'        :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
     'lengh'         :{princ: 'asprinc', princtype: 'as', auth: ['_id']}
   });
+}
+
+var proposalStates = [
+  {
+    cod: "p_open",
+    desc: "Open",
+    nextstate : "p_accept"
+  },
+  {
+    cod: "p_open",
+    desc: "Open",
+    nextstate: "p_reject"
+  },
+  {
+    cod: "p_accept",
+    desc: "Accept",
+    nextstate: null
+  },
+  {
+    cod: "p_reject",
+    desc: "Reject",
+    nextstate: null
+  }
+];
+
+var contractStates = [
+  {
+    cod: "c_created",
+    desc: "Created",
+    nextstate: "c_analysis"
+  },
+  {
+    cod: "c_analysis",
+    desc: "Analysis by Client",
+    nextstate: "c_reject"
+  },
+  {
+    cod: "c_analysis",
+    desc: "Analysis by Client",
+    nextstate: "c_signed"
+  },
+  {
+    cod: "c_signed",
+    state: "Signed",
+    nextstate: "c_reject_provider"
+  },
+  {
+    cod: "c_signed",
+    state: "Signed",
+    nextstate: "c_registered"
+  },
+  {
+    cod: "c_reject",
+    state: "Reject",
+    nextstate: null
+  },
+  {
+    cod: "c_reject_provider",
+    state: "Reject by Provider",
+    nextstate: null
+  },
+  {
+    cod: "c_registed",
+    state: "Registered",
+    nextstate: null
+  }
+];
+
+var actions = [
+  {
+    cod: "a_accept_proposal",
+    statecod: "p_open",
+    who: "provider",
+    desc: "Accept proposal?"
+  },
+  {
+    cod: "a_reject_proposal",
+    statecod: "p_open",
+    who: "provider",
+    desc: "Reject proposal?"
+  },
+  {
+    cod: "a_sign_contract",
+    statecod: "c_analysis",
+    who: "costumer",
+    desc: "Sign contract?"
+  },
+  {
+    cod: "a_reject_contract",
+    statecod: "c_analysis",
+    who: "costumer",
+    desc: "Reject contract?"
+  },
+  {
+    cod: "a_reject_signature",
+    statecod: "c_signed",
+    who: "provider",
+    desc: "Reject signature?"
+  },
+  {
+    cod: "a_register_contract",
+    statecod: "c_signed",
+    who: "provider",
+    desc: "Register contract"
+  }
+];
+
+
+if(WorkflowActions.find().count() == 0) {
+  _.each(actions, function(c) {
+  WorkflowActions.insert(c);
+});
+}
+
+if(ContractStates.find().count() == 0) {
+_.each(contractStates, function(c) {
+  ContractStates.insert(c);
+});
+}
+
+if(ProposalStates.find().count() == 0) {
+_.each(proposalStates, function(p) {
+  ProposalStates.insert(p);
+});
 }
 
 
@@ -85,6 +215,91 @@ if (Meteor.isServer) {
   });
 
   Ases.allow({
+  // anyone can insert a new room
+  insert: function (userId, doc) {
+      return true;
+  },
+  // only owner can change room
+  update: function (userId, doc, fields, modifier) {
+      //return doc.createdByID === userId;
+      return true;
+  },
+  // only owner can remove room
+  remove: function (userId, doc) {
+      //return doc.createdByID === userId;
+      return false;
+  }
+  });
+
+  ProposalStates.allow({
+  // anyone can insert a new room
+  insert: function (userId, doc) {
+      return false;
+  },
+  // only owner can change room
+  update: function (userId, doc, fields, modifier) {
+      //return doc.createdByID === userId;
+      return false;
+  },
+  // only owner can remove room
+  remove: function (userId, doc) {
+      //return doc.createdByID === userId;
+      return false;
+  }
+  });
+
+  ContractStates.allow({
+  // anyone can insert a new room
+  insert: function (userId, doc) {
+      return false;
+  },
+  // only owner can change room
+  update: function (userId, doc, fields, modifier) {
+      //return doc.createdByID === userId;
+      return false;
+  },
+  // only owner can remove room
+  remove: function (userId, doc) {
+      //return doc.createdByID === userId;
+      return false;
+  }
+  });
+
+  WorkflowActions.allow({
+  // anyone can insert a new room
+  insert: function (userId, doc) {
+      return false;
+  },
+  // only owner can change room
+  update: function (userId, doc, fields, modifier) {
+      //return doc.createdByID === userId;
+      return false;
+  },
+  // only owner can remove room
+  remove: function (userId, doc) {
+      //return doc.createdByID === userId;
+      return false;
+  }
+  });
+
+  Proposals.allow({
+  // anyone can insert a new room
+  insert: function (userId, doc) {
+      return true;
+  },
+  // only owner can change room
+  update: function (userId, doc, fields, modifier) {
+      //return doc.createdByID === userId;
+      return true;
+  },
+  // only owner can remove room
+  remove: function (userId, doc) {
+      //return doc.createdByID === userId;
+      return false;
+  }
+  });
+
+  Contracts.allow({
   // anyone can insert a new room
   insert: function (userId, doc) {
       return true;

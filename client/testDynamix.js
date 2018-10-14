@@ -10,7 +10,11 @@ if (Meteor.isClient) {
   Deps.autorun(function(){
     Meteor.subscribe('offers');
     Meteor.subscribe('users');
-    //Meteor.subscribe('ases');
+    Meteor.subscribe('proposalstates');
+    Meteor.subscribe('contractstates');
+    Meteor.subscribe('proposals');
+    Meteor.subscribe('contracts');
+    Meteor.subscribe('workflowactions');
   });
 
   Template.hello.greeting = function () {
@@ -190,9 +194,35 @@ if (Meteor.isClient) {
     }
   });
 
+  Template.searchOffersResult.events({
+    'click #sendProposal': function(evt) {
+      evt.preventDefault();
+      alert($("#sendProposal").val());
+
+      offer = Offers.findOne({_id: $("#sendProposal").val()});
+      Proposals.insert({costumer: Meteor.userId(), provider: offer.createdBy, offer_id: offer._id,
+                        propdoc: "asdsad", state: "p_open"});
+
+    }
+  });
+
   Template.offer.offers = function() {
     return Offers.find({createdBy:Meteor.userId()});
     //return Offers.find();
+  };
+
+  Template.proposals.proposal = function() {
+    //return Proposals.find({$or: [{costumer : Meteor.userId()}, {provider : Meteor.userId()}]});
+    return Proposals.find();
+    //return Offers.find();
+  };
+
+  Template.proposals.actions = function(state) {
+    return WorkflowActions.find({statecod:state});
+  };
+
+  Template.proposals.states = function(state_cod) {
+    return ProposalStates.findOne({cod:state_cod});
   };
 
 }

@@ -36,8 +36,16 @@
   					{{> searchOffersResult}}
   				</td>
   			</tr>
+  			<tr>
+  				<td>
+  				{{> proposals}}
+  				</td>
+  				<td>
+  					{{> contracts}}
+  				</td>
+  			</tr>
   		</table>
-  		{{> receivedIntents}}
+  		
 		<br>
 		<br>
   		{{else}}
@@ -171,6 +179,7 @@
 	<p><h2>Search Result</h2><p>
 	<table border=1>
 		<tr>
+			<th><label>id</label></th>
 			<th><label>user</label></th>
 			<th><label>aspath</label></th>
 			<th><label>bwidth</label></th>
@@ -184,10 +193,11 @@
 			<th><label>ingress</label></th>
 			<th><label>egress</label></th>
 			<th><label>lengh</label><</th>
-			<th><label>Intent</label></th>
+			<th><label>actions</label></th>
 		</tr>
 		{{#each offersResult}}
 		<tr>
+			<td>{{_id}}</td>
 			<td>{{userId}}</td>
 			<td>{{aspath}}</td>
 			<td>{{bwidth}}</td>
@@ -201,28 +211,55 @@
 			<td>{{ingress}}</td>
 			<td>{{egress}}</td>
 			<td>{{lengh}}</td>
-			<td><button>Send an intent</button></td>
+			<td><button id="sendProposal" value={{_id}}>Send a proposal</button></td>
 		</tr>
 		{{/each}}
 	</table>
 </template>
 
-<template name="receivedIntents">
-	<h3>Intents</h3>
+<template name="proposals">
+	<h2>Proposals</h2>
 	<table border=1>
-		<th><label>AS</label></th>
-		<th><label>aspath</label></th>
-		<th><label>bwidth</label></th>
-		<th><label>latency</label></th>
-		<th><label>pkt_loss</label></th>
-		<th><label>jitter</label></th>
-		<th><label>repair</label></th>
-		<th><label>guarantee</label></th>
-		<th><label>availability</label></th>
-		<th><label>billing</label></th>
-		<th><label>ingress</label></th>
-		<th><label>egress</label></th>
-		<th><label>lengh</label><</th>
-		<th><label>Intent</label></th>
+		<tr>
+			<th><label>Costumer</label></th>
+			<th><label>Provider</label></th>
+			<th><label>Offer</label></th>
+			<th><label>Proposal</label></th>
+			<th><label>State</label></th>
+			<th><label>Actions</label></th>
+		</tr>
+		{{#each proposal}}
+		<tr>
+			<td>{{costumer}}</td>
+			<td>{{provider}}</td>
+			<td>{{offer_id}}</td>
+			<td>{{propdoc}}</td>
+			{{#with states state}}
+				<td>{{desc}}</td>
+			{{/with}}
+			<td>
+				<table>
+					{{#each actions state}}
+					<tr>
+						<td>
+							<button value={{cod}}>{{desc}}</button>
+						</td>
+					</tr>
+					{{/each}}
+				</table>
+			</td>
+		</tr>
+		{{/each}}
+	</table>
+</template>
+
+<template name="contracts">
+	<h2>Contracts</h2>
+	<table border=1>
+		<tr>
+			<th><label>proposal</label></th>
+			<th><label>document</label></th>
+			<th><label>actions</label></th>
+		</tr>
 	</table>
 </template>
