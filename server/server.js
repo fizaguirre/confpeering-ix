@@ -38,21 +38,65 @@ Meteor.publish("proposals", function() {
 	return Proposals.find({$or: [{provider: this.userId}, {costumer: this.userId}]});
 });
 
-Meteor.publish("costumer_proposals", function() {
+/*Meteor.publish("costumer_proposals", function() {
 	return Proposals.find({costumer: this.userId});
-});
+});*/
 
 Meteor.publish("contracts", function() {
-	return Contracts.find({provider: this.userId});
+	return Contracts.find({$or: [{provider: this.userId}, {costumer: this.userId}]});
 });
 
-Meteor.publish("costumer_contracts", function() {
+/*Meteor.publish("costumer_contracts", function() {
 	return Contracts.find({costumer: this.userId});
-});
+});*/
 
 Meteor.methods({
 	'ShareOffers': function(asIDOferer, asIDClient) {
 		//db.ases.update({as_id:5}, {$push:{as_oferers:2} }, {upsert:true});
 		Ases.update({as_id:asIDClient}, {$push:{as_oferers:asIDOferer} }, {upsert:true});
+	},
+	'GetProposalActions': function(pId) {
+		proposal = Proposals.findOne({_id: pId});
+
+		if(this.userId == proposal.costumer) {
+			console.log(WorkflowActions.find({who:"costumer", statecod: proposal.state}).count());
+			return WorkflowActions.find({who:"costumer", statecod: proposal.state}).fetch();
+		}
+		else {
+			console.log(WorkflowActions.find({who:"provider", statecod: proposal.state}).count());
+			return WorkflowActions.find({who:"provider", statecod: proposal.state}).fetch();
+		}
+	},
+	'MoveProposal': function(pid, action) {
+		proposal = Proposals.findOne({_id: pid});
+		action = WorkflowActions.findOne({cod:action});
+
+		// console.log('MoveProposal');
+		// console.log(proposal);
+		// console.log(action);
+
+		//Proposals.update({_id: proposal._id}, {$set: {state:action.nextstatecod}});
+
+		switch(action.cod) {
+			case 'a_gen_contract':
+				console.log('a_gen_contract');
+				Contracts.insert({costumer:proposal.costumer, provider: proposal.provider,
+									contdoc: "ahshsah", state:"c_created"});
+				Proposals.update({_id: proposal._id}, {$set: {state:action.nextstatecod}});
+				break;
+			default:
+				Proposals.update({_id: proposal._id}, {$set: {state:action.nextstatecod}});
+				break;
+		}
+	},
+	'MoveContract': function(pid, action) {
+		contract = Contracts.findOne({_id: pid});
+		action = WorkflowActions.findOne({cod:action});
+
+		switch(action.cod) {
+			default:
+				Contracts.update({_id: contract._id}, {$set: {state:action.nextstatecod}});
+				break;
+		}
 	}
 });

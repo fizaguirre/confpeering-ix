@@ -217,12 +217,91 @@ if (Meteor.isClient) {
     //return Offers.find();
   };
 
-  Template.proposals.actions = function(state) {
-    return WorkflowActions.find({statecod:state});
+  Template.proposals.actions = function(pid) {
+    proposal = Proposals.findOne({_id:pid});
+    
+    if(Meteor.userId() == proposal.costumer) {
+      return WorkflowActions.find({$and: [{who:"costumer"}, {statecod:proposal.state}]});
+    }
+    else if(Meteor.userId() == proposal.provider) {
+      return WorkflowActions.find({$and: [{who:"provider"}, {statecod:proposal.state}]});
+    }
   };
+
+  // Template.proposals.actions = function(state) {
+  //   return WorkflowActions.find({statecod:state});
+  //   // actions = null;
+  //   // Meteor.call('GetProposalActions', pid, function(e,r){ actions = r; });
+  //   // console.log(actions);
+  //   // console.log(pid);
+  //   // return actions;
+  // };
 
   Template.proposals.states = function(state_cod) {
     return ProposalStates.findOne({cod:state_cod});
   };
+
+  Template.proposals.events({
+    'click #a_accept_proposal': function(evt) {
+      console.log("call accept proposal");
+      pid = $("#a_accept_proposal").val();
+      Meteor.call('MoveProposal', pid, 'a_accept_proposal');
+    },
+    'click #a_reject_proposal': function(evt) {
+      console.log("call accept proposal");
+      pid = $("#a_reject_proposal").val();
+      Meteor.call('MoveProposal', pid, 'a_reject_proposal');
+    },
+    'click #a_gen_contract': function(evt) {
+      console.log("call a_gen_contract");
+      pid = $("#a_gen_contract").val();
+      Meteor.call('MoveProposal', pid, 'a_gen_contract');
+    }
+  });
+
+  Template.contracts.contract = function() {
+    //return Proposals.find({$or: [{costumer : Meteor.userId()}, {provider : Meteor.userId()}]});
+    return Contracts.find();
+    //return Offers.find();
+  };
+
+  Template.contracts.states = function(state_cod) {
+    return ContractStates.findOne({cod:state_cod});
+  };
+
+  Template.contracts.actions = function(pid) {
+    contract = Contracts.findOne({_id:pid});
+    
+    if(Meteor.userId() == contract.costumer) {
+      return WorkflowActions.find({$and: [{who:"costumer"}, {statecod:contract.state}]});
+    }
+    else if(Meteor.userId() == contract.provider) {
+      return WorkflowActions.find({$and: [{who:"provider"}, {statecod:contract.state}]});
+    }
+  };
+
+  Template.contracts.events({
+    'click #a_contract_send': function(evt) {
+      pid = $("#a_contract_send").val();
+      Meteor.call('MoveContract', pid, 'a_contract_send');
+    },
+    'click #a_sign_contract': function(evt) {
+      pid = $("#a_sign_contract").val();
+      Meteor.call('MoveContract', pid, 'a_sign_contract');
+    },
+    'click #a_reject_contract': function(evt) {
+      pid = $("#a_reject_contract").val();
+      Meteor.call('MoveContract', pid, 'a_reject_contract');
+    },
+    'click #a_reject_signature': function(evt) {
+      pid = $("#a_reject_signature").val();
+      Meteor.call('MoveContract', pid, 'a_reject_signature');
+    },
+    'click #a_register_contract': function(evt) {
+      pid = $("#a_register_contract").val();
+      Meteor.call('MoveContract', pid, 'a_register_contract');
+    }
+  });
+
 
 }

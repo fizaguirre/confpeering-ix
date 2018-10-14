@@ -239,10 +239,10 @@
 			{{/with}}
 			<td>
 				<table>
-					{{#each actions state}}
+					{{#each actions _id}}
 					<tr>
 						<td>
-							<button value={{cod}}>{{desc}}</button>
+							<button id={{cod}} value={{../_id}}>{{desc}}</button>
 						</td>
 					</tr>
 					{{/each}}
@@ -257,9 +257,32 @@
 	<h2>Contracts</h2>
 	<table border=1>
 		<tr>
-			<th><label>proposal</label></th>
-			<th><label>document</label></th>
-			<th><label>actions</label></th>
+			<th><label>Costumer</label></th>
+			<th><label>Provider</label></th>
+			<th><label>Contract</label></th>
+			<th><label>State</label></th>
+			<th><label>Actions</label></th>
 		</tr>
+		{{#each contract}}
+		<tr>
+			<td>{{costumer}}</td>
+			<td>{{provider}}</td>
+			<td>{{contdoc}}</td>
+			{{#with states state}}
+				<td>{{desc}}</td>
+			{{/with}}
+			<td>
+				<table>
+					{{#each actions _id}}
+					<tr>
+						<td>
+							<button id={{cod}} value={{../_id}}>{{desc}}</button>
+						</td>
+					</tr>
+					{{/each}}
+				</table>
+			</td>
+		</tr>
+		{{/each}}
 	</table>
 </template>

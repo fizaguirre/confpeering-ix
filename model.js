@@ -59,11 +59,16 @@ var proposalStates = [
   {
     cod: "p_accept",
     desc: "Accept",
-    nextstate: null
+    nextstate: "p_contract"
   },
   {
     cod: "p_reject",
     desc: "Reject",
+    nextstate: null
+  },
+  {
+    cod: "p_contract",
+    desc: "In agreement",
     nextstate: null
   }
 ];
@@ -86,27 +91,27 @@ var contractStates = [
   },
   {
     cod: "c_signed",
-    state: "Signed",
+    desc: "Signed",
     nextstate: "c_reject_provider"
   },
   {
     cod: "c_signed",
-    state: "Signed",
+    desc: "Signed",
     nextstate: "c_registered"
   },
   {
     cod: "c_reject",
-    state: "Reject",
+    desc: "Reject",
     nextstate: null
   },
   {
     cod: "c_reject_provider",
-    state: "Reject by Provider",
+    desc: "Reject by Provider",
     nextstate: null
   },
   {
-    cod: "c_registed",
-    state: "Registered",
+    cod: "c_registered",
+    desc: "Registered",
     nextstate: null
   }
 ];
@@ -115,38 +120,58 @@ var actions = [
   {
     cod: "a_accept_proposal",
     statecod: "p_open",
+    nextstatecod: "p_accept",
     who: "provider",
-    desc: "Accept proposal?"
+    desc: "Accept proposal"
   },
   {
     cod: "a_reject_proposal",
     statecod: "p_open",
+    nextstatecod: "p_reject",
     who: "provider",
-    desc: "Reject proposal?"
+    desc: "Reject proposal"
+  },
+  {
+    cod: "a_contract_send",
+    statecod: "c_created",
+    nextstatecod: "c_analysis",
+    who: "provider",
+    desc: "Send contract to client"
   },
   {
     cod: "a_sign_contract",
     statecod: "c_analysis",
+    nextstatecod: "c_signed",
     who: "costumer",
-    desc: "Sign contract?"
+    desc: "Sign contract"
   },
   {
     cod: "a_reject_contract",
     statecod: "c_analysis",
+    nextstatecod: "c_reject",
     who: "costumer",
-    desc: "Reject contract?"
+    desc: "Reject contract"
   },
   {
     cod: "a_reject_signature",
     statecod: "c_signed",
+    nextstatecod: "c_reject_provider",
     who: "provider",
-    desc: "Reject signature?"
+    desc: "Reject signature"
   },
   {
     cod: "a_register_contract",
     statecod: "c_signed",
+    nextstatecod: "c_registered",
     who: "provider",
     desc: "Register contract"
+  },
+    {
+    cod: "a_gen_contract",
+    statecod: "p_accept",
+    nextstatecod: "p_contract",
+    who: "provider",
+    desc: "Generate contract"
   }
 ];
 
