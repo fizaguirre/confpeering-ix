@@ -67,7 +67,7 @@ Meteor.methods({
 			return WorkflowActions.find({who:"provider", statecod: proposal.state}).fetch();
 		}
 	},
-	'MoveProposal': function(pid, action) {
+	'MoveProposal': function(pid, action, option) {
 		proposal = Proposals.findOne({_id: pid});
 		action = WorkflowActions.findOne({cod:action});
 
@@ -93,7 +93,7 @@ Meteor.methods({
 			case 'a_gen_contract':
 				console.log('a_gen_contract');
 				Contracts.insert({costumer:proposal.costumer, provider: proposal.provider,
-									contdoc: "ahshsah", state:"c_created"});
+									contdoc: option, state:"c_created"});
 				Proposals.update({_id: proposal._id}, {$set: {state:action.nextstatecod}});
 				break;
 			default:

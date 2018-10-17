@@ -3,6 +3,10 @@ function ferr(e)
   console.log(e);
 }
 
+function generateHash() {
+  return Math.random().toString(36).substring(7);
+}
+
 var searchKey = '';
 
 if (Meteor.isClient) {
@@ -199,9 +203,11 @@ if (Meteor.isClient) {
       evt.preventDefault();
       alert($("#sendProposal").val());
 
+      proposalDoc = generateHash();
+
       offer = Offers.findOne({_id: $("#sendProposal").val()});
       Proposals.insert({costumer: Meteor.userId(), provider: offer.createdBy, offer_id: offer._id,
-                        propdoc: "asdsad", state: "p_open"});
+                        propdoc: proposalDoc, state: "p_open"});
 
     }
   });
@@ -255,7 +261,7 @@ if (Meteor.isClient) {
     'click #a_gen_contract': function(evt) {
       console.log("call a_gen_contract");
       pid = $("#a_gen_contract").val();
-      Meteor.call('MoveProposal', pid, 'a_gen_contract');
+      Meteor.call('MoveProposal', pid, 'a_gen_contract', generateHash());
     }
   });
 
