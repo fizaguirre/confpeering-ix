@@ -71,11 +71,23 @@ Meteor.methods({
 		proposal = Proposals.findOne({_id: pid});
 		action = WorkflowActions.findOne({cod:action});
 
-		// console.log('MoveProposal');
-		// console.log(proposal);
-		// console.log(action);
-
-		//Proposals.update({_id: proposal._id}, {$set: {state:action.nextstatecod}});
+		//Check user permissions
+		if(action.who == "costumer") {
+			if(this.userId != proposal.costumer) {
+				console.log("not costumer");
+				return false;
+			}
+		}
+		else {
+			if (action.who == "provider") {
+				if (this.userId != proposal.provider) {
+					console.log(this.userId);
+					console.log(proposal.provider);
+					console.log("not provider");
+					return false;
+				}
+			}
+		} 
 
 		switch(action.cod) {
 			case 'a_gen_contract':
@@ -85,6 +97,7 @@ Meteor.methods({
 				Proposals.update({_id: proposal._id}, {$set: {state:action.nextstatecod}});
 				break;
 			default:
+				console.log("proposal default");
 				Proposals.update({_id: proposal._id}, {$set: {state:action.nextstatecod}});
 				break;
 		}
