@@ -54,6 +54,10 @@ Meteor.publish("asprivateinfo", function() {
 	return ASPrivateInfo.find({userId: this.userId});
 });
 
+Meteor.publish("singatures", function() {
+	return Signatures.find({});
+})
+
 /*Meteor.publish("costumer_contracts", function() {
 	return Contracts.find({costumer: this.userId});
 });*/

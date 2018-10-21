@@ -260,6 +260,8 @@
 			<th><label>Costumer</label></th>
 			<th><label>Provider</label></th>
 			<th><label>Contract</label></th>
+			<th><label>Provider Signature</label></th>
+			<th><label>Costumer Signature</label></th>
 			<th><label>State</label></th>
 			<th><label>Actions</label></th>
 		</tr>
@@ -268,6 +270,16 @@
 			<td>{{costumer}}</td>
 			<td>{{provider}}</td>
 			<td>{{contdoc}}</td>
+			{{#if providerSignature}}
+				<td><button id="verProviderSign" value={{_id}}>Verify Provider Signature</button></td>
+			{{else}}
+				<td></td>
+			{{/if}}
+			{{#if costumerSignature}}
+				<td><button id="verCostumerSign" value={{_id}}>Verify Costumer Signature</button></td>
+			{{else}}
+				<td></td>
+			{{/if}}
 			{{#with states state}}
 				<td>{{desc}}</td>
 			{{/with}}

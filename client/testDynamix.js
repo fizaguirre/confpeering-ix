@@ -11,9 +11,6 @@ var searchKey = '';
 
 if (Meteor.isClient) {
 
-  var pubk = null;
-  var pvtk = null;
-
   Deps.autorun(function(){
     Meteor.subscribe('offers');
     Meteor.subscribe('users');
@@ -24,6 +21,7 @@ if (Meteor.isClient) {
     Meteor.subscribe('workflowactions');
     Meteor.subscribe('asinfo');
     Meteor.subscribe('asprivateinfo');
+    Meteor.subscribe('signatures');
   });
 
   Template.hello.greeting = function () {
@@ -67,19 +65,17 @@ if (Meteor.isClient) {
           Principal.create("as","as_" + Meteor.user().username + "_offers", Principal.user(), ferr);
 
           genUserKeyPair().then(function(k) {
-            pubk = k.publicKey;
-            pvtk = k.privateKey;
 
             window.crypto.subtle.exportKey("jwk", k.privateKey).then(
               function(_pk) {
                 ASPrivateInfo.insert({userId: Meteor.userId(), pk: JSON.stringify(_pk)});
-                console.log(pvtk);
+                console.log(_pk);
               });
 
             window.crypto.subtle.exportKey("jwk", k.publicKey).then(
               function(_pubk) {
                 ASInfo.insert({userId: Meteor.userId(), pubk: JSON.stringify(_pubk)});
-                console.log(pubk);
+                console.log(_pubk);
               });
           });
         }
@@ -100,21 +96,6 @@ if (Meteor.isClient) {
           if(Meteor.user()){
             console.log(Meteor.user());
             console.log(Principal.user());
-
-            userPK = ASPrivateInfo.findOne({userId: Meteor.userId()});
-            window.crypto.subtle.importKey("jwk", JSON.parse(userPK.pk),
-              { name: "ECDSA", namedCurve: "P-256" }, true, ["sign"]).then(function(_pk){
-                pvtk = _pk;
-                console.log(pvtk);
-              });
-
-            userPubK = ASInfo.findOne({userId: Meteor.userId()});
-            window.crypto.subtle.importKey("jwk", JSON.parse(userPubK.pubk),
-              { name: "ECDSA", namedCurve: "P-256" }, true, ["verify"]).then(function(_pubk){
-                pubk = _pubk;
-                console.log(pubk);
-              });
-
           }
           else {
             console.log(error.reason);
@@ -140,17 +121,18 @@ if (Meteor.isClient) {
       _ingress = evt.target.ingress.value;
       _egress = evt.target.egress.value;
       _lengh = evt.target.lengh.value;
+      
+      _signature = null;
 
       _userId = Meteor.userId();
       _createdAt = '';
 
       //Meteor.call('getServerTime', function(e, r) { _createdAt = r; });
 
-
       Principal.lookup([new PrincAttr("as", "as_" + Meteor.user().username + "_offers")],
                         Meteor.user().username,
                         function(userPrincipal) {
-                          Offers.insert({
+                          var _offer = {
                             userId: _userId,
                             asprinc: userPrincipal.id,
                             aspath: _aspath,
@@ -166,9 +148,18 @@ if (Meteor.isClient) {
                             egress: _egress,
                             lengh: _lengh,
                             createdBy: _userId,
-                            createdAt: + new Date()
+                            createdAt: + new Date() };
+
+                          var _offerId = Offers.insert(_offer);
+
+                          getUserPrivateKey().then(function(_pk) {
+                            signDocument(_pk,JSON.stringify(_offer)).then(function(signedDoc) {
+                              buffer = new Uint8Array(signedDoc);
+                              Signatures.insert({userId: Meteor.userId(), docId:_offerId, signature: JSON.stringify(buffer)});
                             });
+                          });
                         });
+
 
       evt.target.aspath.value = '';
       evt.target.bwidth.value = '';
@@ -328,12 +319,28 @@ if (Meteor.isClient) {
 
   Template.contracts.events({
     'click #a_contract_send': function(evt) {
-      pid = $("#a_contract_send").val();
-      Meteor.call('MoveContract', pid, 'a_contract_send');
+      cid = $("#a_contract_send").val();
+      getUserPrivateKey().then(function(_pk) {
+        var contract = Contracts.findOne({_id: cid});
+        signDocument(_pk, contract.contdoc).then(function(signedDoc) {
+          var buffer = new Uint8Array(signedDoc);
+          //Signatures.insert({userId: Meteor.userId(), docId: contract._id, signature: JSON.stringify(buffer)});
+          Contracts.update({_id: cid}, {$set : {providerSignature: btoa(buffer)}});
+        });
+      });
+      Meteor.call('MoveContract', cid, 'a_contract_send');
     },
     'click #a_sign_contract': function(evt) {
-      pid = $("#a_sign_contract").val();
-      Meteor.call('MoveContract', pid, 'a_sign_contract');
+      cid = $("#a_sign_contract").val();
+      getUserPrivateKey().then(function(_pk) {
+        var contract = Contracts.findOne({_id: cid});
+        signDocument(_pk, contract.contdoc).then(function(signedDoc) {
+          var buffer = new Uint8Array(signedDoc);
+          //Signatures.insert({userId: Meteor.userId(), docId: contract._id, signature: JSON.stringify(buffer)});
+          Contracts.update({_id: cid}, {$set: {costumerSignature: JSON.stringify(buffer)}});
+        });
+      });
+      Meteor.call('MoveContract', cid, 'a_sign_contract');
     },
     'click #a_reject_contract': function(evt) {
       pid = $("#a_reject_contract").val();
@@ -346,6 +353,21 @@ if (Meteor.isClient) {
     'click #a_register_contract': function(evt) {
       pid = $("#a_register_contract").val();
       Meteor.call('MoveContract', pid, 'a_register_contract');
+    },
+    'click #verProviderSign': function(evt) {
+      cid = $("#verProviderSign").val();
+      var contract = Contracts.findOne({_id: cid});
+      var signature = new Uint8Array(JSON.parse("[" + atob(contract.providerSignature) + "]"));
+      getUserPublicKey(contract.provider).then(function(upubk) {
+        verifyDocumentSignature(upubk, signature, contract.contdoc).then(function(isvalid) {
+          if(isvalid) {
+            alert("valid signature");
+          }
+          else {
+            alert("not valid signature");
+          }
+        });
+      });
     }
   });
 }
@@ -379,10 +401,25 @@ function genUserKeyPair() {
   });
 }
 
-function signContract(pvtKey, data) {
-
+function signDocument(_pk, data) {
+  return getUserPrivateKey().then(function(_pk) {
+    return window.crypto.subtle.sign({name:"ECDSA", hash: {name: "SHA-256"}}, _pk, str2ab(data));
+  })
 }
 
-function verifyContractSignature(pubKey, data) {
-  
+function verifyDocumentSignature(_pubk, signature, data) {
+  _data = str2ab(data);
+  return window.crypto.subtle.verify({name:"ECDSA", hash: {name: "SHA-256"}}, _pubk, signature, _data);
+}
+
+function getUserPublicKey(uid) {
+    var userPubK = ASInfo.findOne({userId: uid});
+    return window.crypto.subtle.importKey("jwk", JSON.parse(userPubK.pubk),
+      { name: "ECDSA", namedCurve: "P-256" }, true, ["verify"]);
+}
+
+function getUserPrivateKey() {
+  var userPK = ASPrivateInfo.findOne({userId: Meteor.userId()});
+  return window.crypto.subtle.importKey("jwk", JSON.parse(userPK.pk),
+    { name: "ECDSA", namedCurve: "P-256" }, true, ["sign"]);
 }

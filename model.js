@@ -7,6 +7,7 @@ Proposals = new Meteor.Collection('proposals');
 Contracts = new Meteor.Collection('contracts');
 ASInfo = new Meteor.Collection("asinfo");
 ASPrivateInfo = new Meteor.Collection("asprivateinfo");
+Signatures = new Meteor.Collection("signatures");
 
 
 search_enable = function() {
@@ -361,6 +362,23 @@ if (Meteor.isServer) {
   });
 
   ASPrivateInfo.allow({
+  // anyone can insert a new room
+  insert: function (userId, doc) {
+      return true;
+  },
+  // only owner can change room
+  update: function (userId, doc, fields, modifier) {
+      //return doc.createdByID === userId;
+      return true;
+  },
+  // only owner can remove room
+  remove: function (userId, doc) {
+      //return doc.createdByID === userId;
+      return false;
+  }
+  });
+
+  Signatures.allow({
   // anyone can insert a new room
   insert: function (userId, doc) {
       return true;
