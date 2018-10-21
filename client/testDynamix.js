@@ -11,6 +11,9 @@ var searchKey = '';
 
 if (Meteor.isClient) {
 
+  var pubk = null;
+  var pvtk = null;
+
   Deps.autorun(function(){
     Meteor.subscribe('offers');
     Meteor.subscribe('users');
@@ -19,6 +22,8 @@ if (Meteor.isClient) {
     Meteor.subscribe('proposals');
     Meteor.subscribe('contracts');
     Meteor.subscribe('workflowactions');
+    Meteor.subscribe('asinfo');
+    Meteor.subscribe('asprivateinfo');
   });
 
   Template.hello.greeting = function () {
@@ -52,11 +57,31 @@ if (Meteor.isClient) {
         password: evt.target.passlReg.value
       }
 
+      userKeys = null;
+      genUserKeyPair().then(function(k) { userKeys = k;});
+
       Accounts.createUser(registerUser, function(error){
         if(Meteor.user())
         {
           console.log(Meteor.user());
-          Principal.create("as","as_" + Meteor.user().username + "_offers", Principal.user(), ferr)
+          Principal.create("as","as_" + Meteor.user().username + "_offers", Principal.user(), ferr);
+
+          genUserKeyPair().then(function(k) {
+            pubk = k.publicKey;
+            pvtk = k.privateKey;
+
+            window.crypto.subtle.exportKey("jwk", k.privateKey).then(
+              function(_pk) {
+                ASPrivateInfo.insert({userId: Meteor.userId(), pk: JSON.stringify(_pk)});
+                console.log(pvtk);
+              });
+
+            window.crypto.subtle.exportKey("jwk", k.publicKey).then(
+              function(_pubk) {
+                ASInfo.insert({userId: Meteor.userId(), pubk: JSON.stringify(_pubk)});
+                console.log(pubk);
+              });
+          });
         }
         else
         {
@@ -75,6 +100,21 @@ if (Meteor.isClient) {
           if(Meteor.user()){
             console.log(Meteor.user());
             console.log(Principal.user());
+
+            userPK = ASPrivateInfo.findOne({userId: Meteor.userId()});
+            window.crypto.subtle.importKey("jwk", JSON.parse(userPK.pk),
+              { name: "ECDSA", namedCurve: "P-256" }, true, ["sign"]).then(function(_pk){
+                pvtk = _pk;
+                console.log(pvtk);
+              });
+
+            userPubK = ASInfo.findOne({userId: Meteor.userId()});
+            window.crypto.subtle.importKey("jwk", JSON.parse(userPubK.pubk),
+              { name: "ECDSA", namedCurve: "P-256" }, true, ["verify"]).then(function(_pubk){
+                pubk = _pubk;
+                console.log(pubk);
+              });
+
           }
           else {
             console.log(error.reason);
@@ -308,6 +348,41 @@ if (Meteor.isClient) {
       Meteor.call('MoveContract', pid, 'a_register_contract');
     }
   });
+}
 
+function str2ab(s) {
+  var str = new String(s);
+  var bytes = new Uint8Array(str.length);
+  for(var i = 0; i < str.length; i++) {
+    bytes[i] = str.charCodeAt(i);
+  }
+  return bytes;
+}
 
+function ab2str(ab) {
+  return String.fromCharCode.apply(null, ab);
+}
+
+function genUserKeyPair() {
+  userKeys = null
+
+  return window.crypto.subtle.generateKey(
+  {
+    name: "ECDSA",
+    namedCurve: "P-256"
+  },
+  true,
+  ["sign", "verify"]
+  ).then(function(key)
+  {
+    return key;
+  });
+}
+
+function signContract(pvtKey, data) {
+
+}
+
+function verifyContractSignature(pubKey, data) {
+  
 }

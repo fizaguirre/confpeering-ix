@@ -46,6 +46,14 @@ Meteor.publish("contracts", function() {
 	return Contracts.find({$or: [{provider: this.userId}, {costumer: this.userId}]});
 });
 
+Meteor.publish("asinfo", function() {
+	return ASInfo.find();
+});
+
+Meteor.publish("asprivateinfo", function() {
+	return ASPrivateInfo.find({userId: this.userId});
+});
+
 /*Meteor.publish("costumer_contracts", function() {
 	return Contracts.find({costumer: this.userId});
 });*/
