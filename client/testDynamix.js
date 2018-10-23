@@ -68,7 +68,8 @@ if (Meteor.isClient) {
 
             window.crypto.subtle.exportKey("jwk", k.privateKey).then(
               function(_pk) {
-                ASPrivateInfo.insert({userId: Meteor.userId(), pk: JSON.stringify(_pk)});
+                ASPrivateInfo.insert({userId: Meteor.userId(), pk: JSON.stringify(_pk), userprinc: Meteor.user()._pk});
+                //ASPrivateInfo.insert({userId: Meteor.userId(), pk: JSON.stringify(_pk)});
                 console.log(_pk);
               });
 
@@ -236,8 +237,20 @@ if (Meteor.isClient) {
       proposalDoc = generateHash();
 
       offer = Offers.findOne({_id: evt.target.value});
+      var user02 = Meteor.users.findOne({_id: offer.createdBy});
+      // Proposals.insert({costumer: Meteor.userId(), provider: offer.createdBy, offer_id: offer._id,
+      //                   propdoc: proposalDoc, state: "p_open"});
+
+      var princ = checkSharedPrincipalExists(Meteor.user().username, user02.username, "proposal");
+      console.log(princ);
+
+      if(princ === null) {
+        createSharedPrincipal(Meteor.user().username, user02.username, "proposal");
+        princ = checkSharedPrincipalExists(Meteor.user().username, user02.username, "proposal");
+      }
+
       Proposals.insert({costumer: Meteor.userId(), provider: offer.createdBy, offer_id: offer._id,
-                        propdoc: proposalDoc, state: "p_open"});
+                        propdoc: proposalDoc, propprinc: princ.id, state: "p_open"});
 
     }
   });
@@ -443,4 +456,35 @@ function getUserPrivateKey() {
   var userPK = ASPrivateInfo.findOne({userId: Meteor.userId()});
   return window.crypto.subtle.importKey("jwk", JSON.parse(userPK.pk),
     { name: "ECDSA", namedCurve: "P-256" }, true, ["sign"]);
+}
+
+function createSharedPrincipal(user1, user2, type) {
+  //Principal.create("as","as_" + Meteor.user().username + "_offers", Principal.user(), ferr);
+
+  Principal.create(type, user1 +"_"+ user2 +"_"+ type, Principal.user(), ferr);
+
+  Principal.lookup([new PrincAttr(type, user1 +"_"+ user2 +"_"+ type)],
+                    Meteor.user().username,
+                    function(sharedPrincipal) {
+                      Principal.lookupUser(user2,
+                        function(userPrincipal) {
+                          Principal.add_access(userPrincipal, sharedPrincipal,
+                            function() {
+                              console.log("Access granted");
+                            })
+                        })
+                    });
+}
+
+function checkSharedPrincipalExists(user1, user2, type) {
+  var princ = null;
+  try{
+    Principal.lookup([new PrincAttr(type, user1 +"_"+ user2 +"_"+ type)], Meteor.user().username,function(userprincipal) {
+      princ = userprincipal;
+    });
+  }
+  catch(err) {
+    console.log("Principal not found.");
+  }
+  return princ;
 }

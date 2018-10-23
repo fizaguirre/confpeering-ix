@@ -30,6 +30,19 @@ if(search_enable()) {
   'egress'        :{princ: 'asprinc', princtype: 'as', auth: ['_id']},
   'lengh'         :{princ: 'asprinc', princtype: 'as', auth: ['_id']}
 });
+
+  ASPrivateInfo._encrypted_fields({
+    'pk'          :{princ: 'userprinc', princtype: 'user', attr: 'SEARCHABLE', auth: ['_id']}
+  });
+
+  Proposals._encrypted_fields({
+    'propdoc'     :{princ: 'propprinc', princtype: 'proposal', attr: 'SEARCHABLE', auth: ['_id']}
+  });
+
+  Contracts._encrypted_fields({
+    'contdoc'     :{princ: 'contprinc', princtype: 'contract', attr: 'SEARCHABLE', auth: ['_id']}
+  });
+
 } else {
   console.info("Search disable");
   Offers._encrypted_fields({
