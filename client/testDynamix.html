@@ -211,7 +211,7 @@
 			<td>{{ingress}}</td>
 			<td>{{egress}}</td>
 			<td>{{lengh}}</td>
-			<td><button id="sendProposal" value={{_id}}>Send a proposal</button></td>
+			<td><button value="{{_id}}" class="sendProposal">Send a proposal</button></td>
 		</tr>
 		{{/each}}
 	</table>
@@ -242,7 +242,7 @@
 					{{#each actions _id}}
 					<tr>
 						<td>
-							<button id={{../_id}} value={{cod}} class="proposalAction">{{desc}}</button>
+							<button value="{{../_id}}|{{cod}}" class="proposalAction">{{desc}}</button>
 						</td>
 					</tr>
 					{{/each}}
@@ -271,12 +271,12 @@
 			<td>{{provider}}</td>
 			<td>{{contdoc}}</td>
 			{{#if providerSignature}}
-				<td><button value={{_id}} class="contractAction">Verify Provider Signature</button></td>
+				<td><button value={{_id}} class="verProviderSign">Verify Provider Signature</button></td>
 			{{else}}
 				<td></td>
 			{{/if}}
 			{{#if costumerSignature}}
-				<td><button value={{_id}} class="contractAction">Verify Costumer Signature</button></td>
+				<td><button value={{_id}} class="verCostumerSign">Verify Costumer Signature</button></td>
 			{{else}}
 				<td></td>
 			{{/if}}
@@ -288,7 +288,7 @@
 					{{#each actions _id}}
 					<tr>
 						<td>
-							<button id={{../_id}} value="{{cod}}|{{../_id}}" class="contractAction">{{desc}}</button>
+							<button value="{{../_id}}|{{cod}}" class="contractAction">{{desc}}</button>
 						</td>
 					</tr>
 					{{/each}}

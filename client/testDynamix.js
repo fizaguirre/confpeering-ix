@@ -230,13 +230,12 @@ if (Meteor.isClient) {
   });
 
   Template.searchOffersResult.events({
-    'click #sendProposal': function(evt) {
+    'click .sendProposal': function(evt) {
       evt.preventDefault();
-      alert($("#sendProposal").val());
 
       proposalDoc = generateHash();
 
-      offer = Offers.findOne({_id: $("#sendProposal").val()});
+      offer = Offers.findOne({_id: evt.target.value});
       Proposals.insert({costumer: Meteor.userId(), provider: offer.createdBy, offer_id: offer._id,
                         propdoc: proposalDoc, state: "p_open"});
 
@@ -295,21 +294,25 @@ if (Meteor.isClient) {
     //   Meteor.call('MoveProposal', pid, 'a_gen_contract', generateHash());
     // },
     'click .proposalAction': function(evt) {
-      switch(evt.target.value)
+      var _values  = evt.target.value.split("|");
+      var _id = _values[0];
+      var state = _values[1];
+
+      switch(state)
       {
         case 'a_accept_proposal':
           console.log("call accept proposal");
-          pid = evt.target.id;
+          pid = _id;
           Meteor.call('MoveProposal', pid, 'a_accept_proposal');
           break;
         case 'a_reject_proposal':
           console.log("call reject proposal");
-          pid = evt.target.id;
+          pid = _id;
           Meteor.call('MoveProposal', pid, 'a_reject_proposal');
           break;
         case 'a_gen_contract':
           console.log("call a_gen_contract");
-          pid = evt.target.id;
+          pid = _id;
           Meteor.call('MoveProposal', pid, 'a_gen_contract', generateHash());
           break;
       }
@@ -389,10 +392,14 @@ if (Meteor.isClient) {
     //     });
     //   });
     // }
-    'click .contracAction': function(evt) {
-      switch(evt.target.value) {
+    'click .contractAction': function(evt) {
+      var _values = evt.target.value.split("|");
+      var state = _values[1];
+      var _id = _values[0];
+
+      switch(state) {
         case 'a_contract_send':
-          cid = $("#a_contract_send").val();
+          cid = _id;
           getUserPrivateKey().then(function(_pk) {
           var contract = Contracts.findOne({_id: cid});
           signDocument(_pk, contract.contdoc).then(function(signedDoc) {
@@ -403,20 +410,33 @@ if (Meteor.isClient) {
           });
           Meteor.call('MoveContract', cid, 'a_contract_send');
           break;
-        case 'a_reject_contract':
-          pid = evt.target.id;
-          Meteor.call('MoveContract', pid, 'a_reject_contract');
+        case 'a_sign_contract':
+          cid = _id;
+          getUserPrivateKey().then(function(_pk) {
+            var contract = Contracts.findOne({_id: cid});
+            signDocument(_pk, contract.contdoc).then(function(signedDoc) {
+              var buffer = new Uint8Array(signedDoc);
+              //Signatures.insert({userId: Meteor.userId(), docId: contract._id, signature: JSON.stringify(buffer)});
+              Contracts.update({_id: cid}, {$set: {costumerSignature: JSON.stringify(buffer)}});
+            });
+          });
+          Meteor.call('MoveContract', cid, 'a_sign_contract');
           break;
         case 'a_reject_signature':
-          pid = evt.target.id;
+          pid = _id;
           Meteor.call('MoveContract', pid, 'a_reject_signature');
+        case 'a_reject_contract':
+          pid = _id;
+          Meteor.call('MoveContract', pid, 'a_reject_contract');
           break;
         case 'a_register_contract':
-          pid = evt.target.id;
+          pid = _id;
           Meteor.call('MoveContract', pid, 'a_register_contract');
           break;
-        case 'verProviderSign':
-          cid = evt.target.id;
+      }
+    },
+    'click .verProviderSign': function(evt) {
+          cid = evt.target.value;
           var contract = Contracts.findOne({_id: cid});
           var signature = new Uint8Array(JSON.parse("[" + atob(contract.providerSignature) + "]"));
           getUserPublicKey(contract.provider).then(function(upubk) {
@@ -429,9 +449,22 @@ if (Meteor.isClient) {
               }
             });
           });
-
+      },
+      'click .verCostumerSign': function(evt) {
+          cid = evt.target.value;
+          var contract = Contracts.findOne({_id: cid});
+          var signature = new Uint8Array(JSON.parse("[" + atob(contract.providerSignature) + "]"));
+          getUserPublicKey(contract.provider).then(function(upubk) {
+            verifyDocumentSignature(upubk, signature, contract.contdoc).then(function(isvalid) {
+              if(isvalid) {
+                alert("valid signature");
+              }
+              else {
+                alert("not valid signature");
+              }
+            });
+          });
       }
-    }
   });
 }
 
