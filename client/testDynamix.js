@@ -264,35 +264,11 @@ if (Meteor.isClient) {
     }
   };
 
-  // Template.proposals.actions = function(state) {
-  //   return WorkflowActions.find({statecod:state});
-  //   // actions = null;
-  //   // Meteor.call('GetProposalActions', pid, function(e,r){ actions = r; });
-  //   // console.log(actions);
-  //   // console.log(pid);
-  //   // return actions;
-  // };
-
   Template.proposals.states = function(state_cod) {
     return ProposalStates.findOne({cod:state_cod});
   };
 
   Template.proposals.events({
-    // 'click #a_accept_proposal': function(evt) {
-    //   console.log("call accept proposal");
-    //   pid = $("#a_accept_proposal").val();
-    //   Meteor.call('MoveProposal', pid, 'a_accept_proposal');
-    // },
-    // 'click #a_reject_proposal': function(evt) {
-    //   console.log("call accept proposal");
-    //   pid = $("#a_reject_proposal").val();
-    //   Meteor.call('MoveProposal', pid, 'a_reject_proposal');
-    // },
-    // 'click #a_gen_contract': function(evt) {
-    //   console.log("call a_gen_contract");
-    //   pid = $("#a_gen_contract").val();
-    //   Meteor.call('MoveProposal', pid, 'a_gen_contract', generateHash());
-    // },
     'click .proposalAction': function(evt) {
       var _values  = evt.target.value.split("|");
       var _id = _values[0];
@@ -341,57 +317,6 @@ if (Meteor.isClient) {
   };
 
   Template.contracts.events({
-    // 'click #a_contract_send': function(evt) {
-    //   cid = $("#a_contract_send").val();
-    //   getUserPrivateKey().then(function(_pk) {
-    //     var contract = Contracts.findOne({_id: cid});
-    //     signDocument(_pk, contract.contdoc).then(function(signedDoc) {
-    //       var buffer = new Uint8Array(signedDoc);
-    //       //Signatures.insert({userId: Meteor.userId(), docId: contract._id, signature: JSON.stringify(buffer)});
-    //       Contracts.update({_id: cid}, {$set : {providerSignature: btoa(buffer)}});
-    //     });
-    //   });
-    //   Meteor.call('MoveContract', cid, 'a_contract_send');
-    // },
-    // 'click #a_sign_contract': function(evt) {
-    //   cid = $("#a_sign_contract").val();
-    //   getUserPrivateKey().then(function(_pk) {
-    //     var contract = Contracts.findOne({_id: cid});
-    //     signDocument(_pk, contract.contdoc).then(function(signedDoc) {
-    //       var buffer = new Uint8Array(signedDoc);
-    //       //Signatures.insert({userId: Meteor.userId(), docId: contract._id, signature: JSON.stringify(buffer)});
-    //       Contracts.update({_id: cid}, {$set: {costumerSignature: JSON.stringify(buffer)}});
-    //     });
-    //   });
-    //   Meteor.call('MoveContract', cid, 'a_sign_contract');
-    // },
-    // 'click #a_reject_contract': function(evt) {
-    //   pid = $("#a_reject_contract").val();
-    //   Meteor.call('MoveContract', pid, 'a_reject_contract');
-    // },
-    // 'click #a_reject_signature': function(evt) {
-    //   pid = $("#a_reject_signature").val();
-    //   Meteor.call('MoveContract', pid, 'a_reject_signature');
-    // },
-    // 'click #a_register_contract': function(evt) {
-    //   pid = $("#a_register_contract").val();
-    //   Meteor.call('MoveContract', pid, 'a_register_contract');
-    // },
-    // 'click #verProviderSign': function(evt) {
-    //   cid = $("#verProviderSign").val();
-    //   var contract = Contracts.findOne({_id: cid});
-    //   var signature = new Uint8Array(JSON.parse("[" + atob(contract.providerSignature) + "]"));
-    //   getUserPublicKey(contract.provider).then(function(upubk) {
-    //     verifyDocumentSignature(upubk, signature, contract.contdoc).then(function(isvalid) {
-    //       if(isvalid) {
-    //         alert("valid signature");
-    //       }
-    //       else {
-    //         alert("not valid signature");
-    //       }
-    //     });
-    //   });
-    // }
     'click .contractAction': function(evt) {
       var _values = evt.target.value.split("|");
       var state = _values[1];
