@@ -245,12 +245,16 @@ if (Meteor.isClient) {
       console.log(princ);
 
       if(princ === null) {
-        createSharedPrincipal(Meteor.user().username, user02.username, "proposal");
-        princ = checkSharedPrincipalExists(Meteor.user().username, user02.username, "proposal");
-      }
-
-      Proposals.insert({costumer: Meteor.userId(), provider: offer.createdBy, offer_id: offer._id,
+        createSharedPrincipal(Meteor.user().username, user02.username, "proposal", function(){
+          princ = checkSharedPrincipalExists(Meteor.user().username, user02.username, "proposal");
+          Proposals.insert({costumer: Meteor.userId(), provider: offer.createdBy, offer_id: offer._id,
                         propdoc: proposalDoc, propprinc: princ.id, state: "p_open"});
+        });
+      }
+      else {
+        Proposals.insert({costumer: Meteor.userId(), provider: offer.createdBy, offer_id: offer._id,
+                        propdoc: proposalDoc, propprinc: princ.id, state: "p_open"});
+      }
 
     }
   });
@@ -302,6 +306,24 @@ if (Meteor.isClient) {
         case 'a_gen_contract':
           console.log("call a_gen_contract");
           pid = _id;
+          var proposal = Proposals.findOne({_id: pid});
+          var costumer = Meteor.users.findOne({_id: proposal.costumer});
+
+          var princ = checkSharedPrincipalExists(Meteor.user().username, costumer.username, "contract");
+
+          if(princ === null){
+            createSharedPrincipal(Meteor.user().username, costumer.username, "contract",
+              function() {
+                  princ = checkSharedPrincipalExists(Meteor.user().username, costumer.username, "contract");
+                  Contracts.insert({costumer:proposal.costumer, provider: proposal.provider,
+                    contdoc: generateHash(), contprinc: princ.id, state:"c_created"});                
+              });
+          }
+          else {
+            Contracts.insert({costumer:proposal.costumer, provider: proposal.provider,
+                  contdoc: generateHash(), contprinc: princ.id, state:"c_created"});
+          }
+
           Meteor.call('MoveProposal', pid, 'a_gen_contract', generateHash());
           break;
       }
@@ -458,7 +480,7 @@ function getUserPrivateKey() {
     { name: "ECDSA", namedCurve: "P-256" }, true, ["sign"]);
 }
 
-function createSharedPrincipal(user1, user2, type) {
+function createSharedPrincipal(user1, user2, type, cb) {
   //Principal.create("as","as_" + Meteor.user().username + "_offers", Principal.user(), ferr);
 
   Principal.create(type, user1 +"_"+ user2 +"_"+ type, Principal.user(), ferr);
@@ -471,9 +493,11 @@ function createSharedPrincipal(user1, user2, type) {
                           Principal.add_access(userPrincipal, sharedPrincipal,
                             function() {
                               console.log("Access granted");
+                              cb();
                             })
                         })
                     });
+
 }
 
 function checkSharedPrincipalExists(user1, user2, type) {

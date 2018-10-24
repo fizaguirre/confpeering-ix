@@ -104,8 +104,8 @@ Meteor.methods({
 		switch(action.cod) {
 			case 'a_gen_contract':
 				console.log('a_gen_contract');
-				Contracts.insert({costumer:proposal.costumer, provider: proposal.provider,
-									contdoc: option, state:"c_created"});
+				// Contracts.insert({costumer:proposal.costumer, provider: proposal.provider,
+				// 					contdoc: option, state:"c_created"});
 				Proposals.update({_id: proposal._id}, {$set: {state:action.nextstatecod}});
 				break;
 			default:
