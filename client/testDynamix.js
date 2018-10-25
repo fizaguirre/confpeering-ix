@@ -377,7 +377,7 @@ if (Meteor.isClient) {
             signDocument(_pk, contract.contdoc).then(function(signedDoc) {
               var buffer = new Uint8Array(signedDoc);
               //Signatures.insert({userId: Meteor.userId(), docId: contract._id, signature: JSON.stringify(buffer)});
-              Contracts.update({_id: cid}, {$set: {costumerSignature: JSON.stringify(buffer)}});
+              Contracts.update({_id: cid}, {$set: {costumerSignature: btoa(buffer)}});
             });
           });
           Meteor.call('MoveContract', cid, 'a_sign_contract');
@@ -413,8 +413,8 @@ if (Meteor.isClient) {
       'click .verCostumerSign': function(evt) {
           cid = evt.target.value;
           var contract = Contracts.findOne({_id: cid});
-          var signature = new Uint8Array(JSON.parse("[" + atob(contract.providerSignature) + "]"));
-          getUserPublicKey(contract.provider).then(function(upubk) {
+          var signature = new Uint8Array(JSON.parse("[" + atob(contract.costumerSignature) + "]"));
+          getUserPublicKey(contract.costumer).then(function(upubk) {
             verifyDocumentSignature(upubk, signature, contract.contdoc).then(function(isvalid) {
               if(isvalid) {
                 alert("valid signature");
