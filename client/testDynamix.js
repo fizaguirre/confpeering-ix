@@ -22,6 +22,7 @@ if (Meteor.isClient) {
     Meteor.subscribe('asinfo');
     Meteor.subscribe('asprivateinfo');
     Meteor.subscribe('signatures');
+    Meteor.subscribe('scores');
   });
 
   Template.hello.greeting = function () {
@@ -340,6 +341,14 @@ if (Meteor.isClient) {
     return ContractStates.findOne({cod:state_cod});
   };
 
+  Template.contracts.isRegistered = function(state_cod) {
+    if(state_cod === 'c_registered')
+    {
+      return true;
+    }
+    return false;
+  }
+
   Template.contracts.actions = function(pid) {
     contract = Contracts.findOne({_id:pid});
     
@@ -424,6 +433,11 @@ if (Meteor.isClient) {
               }
             });
           });
+      },
+      'click .scoreButton': function(evt) {
+        var cid = evt.target.value;
+        var score = document.getElementsByName("score_"+cid)[0];
+        Scores.insert({userId: Meteor.userId(), contractId: cid, score: score.value});
       }
   });
 }

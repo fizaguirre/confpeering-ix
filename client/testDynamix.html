@@ -264,6 +264,7 @@
 			<th><label>Costumer Signature</label></th>
 			<th><label>State</label></th>
 			<th><label>Actions</label></th>
+			<th><label>Score</label></th>
 		</tr>
 		{{#each contract}}
 		<tr>
@@ -292,8 +293,11 @@
 						</td>
 					</tr>
 					{{/each}}
-				</table>l
+				</table>
 			</td>
+			{{#if isRegistered state}}
+				<td><input type="number" min="0" max="5" name="score_{{_id}}"><button value="{{_id}}" class="scoreButton">Ok</button></td>
+			{{/if}}
 		</tr>
 		{{/each}}
 	</table>

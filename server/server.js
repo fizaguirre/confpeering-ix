@@ -56,6 +56,10 @@ Meteor.publish("asprivateinfo", function() {
 
 Meteor.publish("singatures", function() {
 	return Signatures.find({});
+});
+
+Meteor.publish("Scores", function() {
+	return Scores.find({});
 })
 
 /*Meteor.publish("costumer_contracts", function() {
