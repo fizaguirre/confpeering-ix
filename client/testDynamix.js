@@ -455,6 +455,35 @@ if (Meteor.isClient) {
         Scores.insert({userId: Meteor.userId(), contractId: cid, score: score.value});
       }
   });
+
+  Template.history.events({
+    'click #find_as_history': function(evt) {
+      var as_value = document.getElementById("as_history_user_iput");
+      Session.set("as_lookup", as_value.value);
+    }
+  });
+
+  Template.feedbakHistory.feedback = function() {
+    var as = Session.get("as_lookup");
+
+    if(as != undefined) {
+      var scores = Scores.find({userId: as}).fetch();
+      var history = [];
+
+      _.each(scores, function(s) {
+        var contract = Contracts.findOne({_id: s.contractId});
+        var costumer = Meteor.users.findOne({_id: contract.costumer});
+        var provider = Meteor.users.findOne({_id: contract.provider});
+
+        var feedback = {cid: contract._id, costumer: costumer.username, provider: provider.username,
+                        score: s.score};
+
+        history.push(feedback);
+      });
+      return history;
+    }
+  };
+
 }
 
 function str2ab(s) {

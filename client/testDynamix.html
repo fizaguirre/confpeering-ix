@@ -38,10 +38,16 @@
   			</tr>
   			<tr>
   				<td>
-  				{{> proposals}}
+  					{{> proposals}}
   				</td>
   				<td>
   					{{> contracts}}
+  				</td>
+  			</tr>
+  			<tr>
+  				<td>
+  					{{> history}}
+
   				</td>
   			</tr>
   		</table>
@@ -304,6 +310,36 @@
 					<td><input type="number" min="0" max="5" name="score_{{_id}}"><button value="{{_id}}" class="scoreButton">Ok</button></td>
 				{{/if}}
 			{{/if}}
+		</tr>
+		{{/each}}
+	</table>
+</template>
+
+<template name="history">
+	<h3>History</h3>
+	<h4>Lookup for AS feedbacks</h4>
+	<label for="as_history">AS</label>
+	<input type="text" id="as_history_user_iput" name="as_history">
+	<button id="find_as_history">Lookup</button>
+
+	{{> feedbakHistory}}	
+</template>
+
+<template name="feedbakHistory">
+	<table border=1>
+		<tr>
+			<label><th>Contract</th></label>
+			<label><th>Provider</th></label>
+			<label><th>Costumer</th></label>
+			<label><th>Score</th></label>
+		</tr>
+
+		{{#each feedback}}
+		<tr>
+			<td>{{cid}}</td>
+			<td>{{provider}}</td>
+			<td>{{costumer}}</td>
+			<td>{{score}}</td>
 		</tr>
 		{{/each}}
 	</table>
