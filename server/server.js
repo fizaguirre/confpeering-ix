@@ -58,7 +58,7 @@ Meteor.publish("singatures", function() {
 	return Signatures.find({});
 });
 
-Meteor.publish("Scores", function() {
+Meteor.publish("scores", function() {
 	return Scores.find({});
 })
 

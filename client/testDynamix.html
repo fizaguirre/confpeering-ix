@@ -295,8 +295,14 @@
 					{{/each}}
 				</table>
 			</td>
-			{{#if isRegistered state}}
-				<td><input type="number" min="0" max="5" name="score_{{_id}}"><button value="{{_id}}" class="scoreButton">Ok</button></td>
+			{{#if evaluated _id}}
+				{{#with scores ../_id}}
+				<td><label>{{score}}</label></td>
+				{{/with}}
+			{{else}}
+				{{#if isRegistered state}}
+					<td><input type="number" min="0" max="5" name="score_{{_id}}"><button value="{{_id}}" class="scoreButton">Ok</button></td>
+				{{/if}}
 			{{/if}}
 		</tr>
 		{{/each}}

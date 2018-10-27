@@ -349,6 +349,21 @@ if (Meteor.isClient) {
     return false;
   }
 
+  Template.contracts.evaluated = function(cid) {
+    var score = null;
+    score = Scores.findOne({contractId: cid, userId: Meteor.userId()});
+    console.log("cid" + cid + "user " + Meteor.userId());
+    if(score === undefined) {
+      return false;
+    }
+    return true;
+  }
+
+  Template.contracts.scores = function(cid) {
+    console.log("cid " + cid + " user " + Meteor.userId());
+    return Scores.findOne({contractId: cid, userId: Meteor.userId()});
+  }
+
   Template.contracts.actions = function(pid) {
     contract = Contracts.findOne({_id:pid});
     
