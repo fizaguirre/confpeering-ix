@@ -153,11 +153,12 @@ if (Meteor.isClient) {
                             createdAt: + new Date() };
 
                           var _offerId = Offers.insert(_offer);
+                          var _offerRegister = Offers.findOne({_id: _offerId});
 
                           getUserPrivateKey().then(function(_pk) {
                             signDocument(_pk,JSON.stringify(_offer)).then(function(signedDoc) {
                               buffer = new Uint8Array(signedDoc);
-                              Signatures.insert({userId: Meteor.userId(), docId:_offerId, signature: JSON.stringify(buffer)});
+                              Signatures.insert({userId: Meteor.userId(), docId:_offerId, signature: btoa(buffer)});
                             });
                           });
                         });
@@ -249,12 +250,14 @@ if (Meteor.isClient) {
         createSharedPrincipal(Meteor.user().username, user02.username, "proposal", function(){
           princ = checkSharedPrincipalExists(Meteor.user().username, user02.username, "proposal");
           Proposals.insert({costumer: Meteor.userId(), provider: offer.createdBy, offer_id: offer._id,
-                        propdoc: proposalDoc, propprinc: princ.id, state: "p_open"});
+                        propdoc: proposalDoc, propprinc: princ.id, state: "p_open",
+                        createdBy: Meteor.userId(), createdAt: + new Date()});
         });
       }
       else {
         Proposals.insert({costumer: Meteor.userId(), provider: offer.createdBy, offer_id: offer._id,
-                        propdoc: proposalDoc, propprinc: princ.id, state: "p_open"});
+                        propdoc: proposalDoc, propprinc: princ.id, state: "p_open",
+                      createdBy: Meteor.userId(), createdAt: + new Date()});
       }
 
     }
@@ -317,12 +320,14 @@ if (Meteor.isClient) {
               function() {
                   princ = checkSharedPrincipalExists(Meteor.user().username, costumer.username, "contract");
                   Contracts.insert({costumer:proposal.costumer, provider: proposal.provider,
-                    contdoc: generateHash(), contprinc: princ.id, state:"c_created"});                
+                    contdoc: generateHash(), contprinc: princ.id, state:"c_created",
+                  createdBy: Meteor.userId(), createdAt: + new Date()});                
               });
           }
           else {
             Contracts.insert({costumer:proposal.costumer, provider: proposal.provider,
-                  contdoc: generateHash(), contprinc: princ.id, state:"c_created"});
+                  contdoc: generateHash(), contprinc: princ.id, state:"c_created",
+                createdBy: Meteor.userId(), createdAt: + new Date()});
           }
 
           Meteor.call('MoveProposal', pid, 'a_gen_contract', generateHash());
@@ -452,7 +457,7 @@ if (Meteor.isClient) {
       'click .scoreButton': function(evt) {
         var cid = evt.target.value;
         var score = document.getElementsByName("score_"+cid)[0];
-        Scores.insert({userId: Meteor.userId(), contractId: cid, score: score.value});
+        Scores.insert({userId: Meteor.userId(), contractId: cid, score: score.value, createdBy: Meteor.userId(), createdAt: + new Date()});
       }
   });
 
