@@ -65,7 +65,7 @@
 <template name="hello">
   <h1>Welcome to Dynamix!</h1><br>
   {{#if currentUser}}
-  <h4>{{currentUser.username}}</h4>
+  <h4 id="userNameHeader">{{currentUser.username}}</h4>
   {{/if}}
   <button class="logout">Logout</button>
 </template>
@@ -126,7 +126,7 @@
 
 <template name="offer">
 	<p><h2>My Offers</h2><p>
-	<table border=1>
+	<table id="myOffersTable" border=1>
 		<tr>
 			<th><label>user</label></th>
 			<th><label>aspath</label></th>
@@ -145,7 +145,7 @@
 		{{#each offers}}
 		<tr>
 			<td>{{userId}}</td>
-			<td>{{aspath}}</td>
+			<td class="myOfferPath">{{aspath}}</td>
 			<td>{{bwidth}}</td>
 			<td>{{latency}}</td>
 			<td>{{pkt_loss}}</td>
@@ -175,9 +175,9 @@
 	<form>
 		<h4>Search for an offer</h4>
 		<label for="aspath3">aspath*</label>
-		<input type="text" name="aspath3">
+		<input type="text" name="aspath3" id="search_as_path_box">
 		<br>
-		<input type="submit" name="searchOffersSubmit" value="Search">
+		<input type="submit" name="searchOffersSubmit" value="Search" id="search_as_path_submit">
 	</form>
 </template>
 
@@ -311,7 +311,8 @@
 				{{/with}}
 			{{else}}
 				{{#if isRegistered state}}
-					<td><input type="number" min="0" max="5" name="score_{{_id}}"><button value="{{_id}}" class="scoreButton">Ok</button></td>
+					<td><input type="number" min="0" max="5" name="score_{{_id}}" class="score_input_number">
+						<button value="{{_id}}" class="scoreButton">Ok</button></td>
 				{{/if}}
 			{{/if}}
 		</tr>
