@@ -156,9 +156,10 @@ if (Meteor.isClient) {
                           var _offerRegister = Offers.findOne({_id: _offerId});
 
                           getUserPrivateKey().then(function(_pk) {
-                            signDocument(_pk,JSON.stringify(_offer)).then(function(signedDoc) {
+                            signDocument(_pk,_offerId).then(function(signedDoc) {
                               buffer = new Uint8Array(signedDoc);
-                              Signatures.insert({userId: Meteor.userId(), docId:_offerId, signature: btoa(buffer)});
+                              Signatures.insert({userId: Meteor.userId(), docId:_offerId, signature: btoa(buffer),
+                                                createdBy: Meteor.userId(), createdAt: + new Date()});
                             });
                           });
                         });
@@ -260,6 +261,24 @@ if (Meteor.isClient) {
                       createdBy: Meteor.userId(), createdAt: + new Date()});
       }
 
+    },
+    'click .verfyOfferSignature' : function(evt) {
+      evt.preventDefault();
+      var oid = evt.target.value;
+
+      var offer = Offers.findOne({_id: oid});
+      var offerSignature = Signatures.findOne({docId: oid});
+      var signature = new Uint8Array(JSON.parse("[" + atob(offerSignature.signature) + "]"));
+      getUserPublicKey(offerSignature.userId).then(function(upubk) {
+        verifyDocumentSignature(upubk, signature, offer._id).then(function(isvalid) {
+          if(isvalid) {
+            alert("valid signature");
+          }
+          else {
+            alert("not valid signature");
+          }
+        });
+      });
     }
   });
 

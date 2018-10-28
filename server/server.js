@@ -54,7 +54,7 @@ Meteor.publish("asprivateinfo", function() {
 	return ASPrivateInfo.find({userId: this.userId});
 });
 
-Meteor.publish("singatures", function() {
+Meteor.publish("signatures", function() {
 	return Signatures.find({});
 });
 
