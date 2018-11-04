@@ -129,3 +129,6 @@ Meteor.methods({
 		}
 	}
 });
+
+process.env.NODE_TLS_REJECT_UNAUTHORIZED="0";
+console.log("NODE TLS "+process.env.NODE_TLS_REJECT_UNAUTHORIZED)

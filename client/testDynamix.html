@@ -205,7 +205,7 @@
 		<tr>
 			<td>{{_id}}</td>
 			<td>{{userId}}</td>
-			<td>{{aspath}}</td>
+			<td class="resAsPath">{{aspath}}</td>
 			<td>{{bwidth}}</td>
 			<td>{{latency}}</td>
 			<td>{{pkt_loss}}</td>
@@ -292,7 +292,7 @@
 				<td></td>
 			{{/if}}
 			{{#with states state}}
-				<td>{{desc}}</td>
+				<td class="contractState">{{desc}}</td>
 			{{/with}}
 			<td>
 				<table>

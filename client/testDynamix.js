@@ -159,7 +159,10 @@ if (Meteor.isClient) {
                             signDocument(_pk,_offerId).then(function(signedDoc) {
                               buffer = new Uint8Array(signedDoc);
                               Signatures.insert({userId: Meteor.userId(), docId:_offerId, signature: btoa(buffer),
-                                                createdBy: Meteor.userId(), createdAt: + new Date()});
+                                                createdBy: Meteor.userId(), createdAt: + new Date()},
+                                                function() {
+                                                  alert("Offer registered");
+                                                });
                             });
                           });
                         });
@@ -196,6 +199,7 @@ if (Meteor.isClient) {
                             function() {
                               evt.target.as_share.value = '';
                               console.log("Access granted");
+                              alert("Offer shared with user");
                             })
                         })
                     });
