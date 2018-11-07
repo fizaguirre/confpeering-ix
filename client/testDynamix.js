@@ -251,19 +251,27 @@ if (Meteor.isClient) {
       var princ = checkSharedPrincipalExists(Meteor.user().username, user02.username, "proposal");
       console.log(princ);
 
+
       if(princ === null) {
         createSharedPrincipal(Meteor.user().username, user02.username, "proposal", function(){
           princ = checkSharedPrincipalExists(Meteor.user().username, user02.username, "proposal");
           Proposals.insert({costumer: Meteor.userId(), provider: offer.createdBy, offer_id: offer._id,
                         propdoc: proposalDoc, propprinc: princ.id, state: "p_open",
-                        createdBy: Meteor.userId(), createdAt: + new Date()});
+                        createdBy: Meteor.userId(), createdAt: + new Date()},
+                        function (e,id) {
+                          alert("Proposal " + id + " sent to provider.");
+                        });
         });
       }
       else {
         Proposals.insert({costumer: Meteor.userId(), provider: offer.createdBy, offer_id: offer._id,
                         propdoc: proposalDoc, propprinc: princ.id, state: "p_open",
-                      createdBy: Meteor.userId(), createdAt: + new Date()});
+                      createdBy: Meteor.userId(), createdAt: + new Date()},
+                      function(e,id) {
+                          alert("Proposal " + id + " sent to provider.");
+                        });
       }
+
 
     },
     'click .verfyOfferSignature' : function(evt) {
@@ -342,13 +350,13 @@ if (Meteor.isClient) {
             createSharedPrincipal(Meteor.user().username, costumer.username, "contract",
               function() {
                   princ = checkSharedPrincipalExists(Meteor.user().username, costumer.username, "contract");
-                  Contracts.insert({costumer:proposal.costumer, provider: proposal.provider,
+                  Contracts.insert({proposalId: pid, costumer:proposal.costumer, provider: proposal.provider,
                     contdoc: generateHash(), contprinc: princ.id, state:"c_created",
                   createdBy: Meteor.userId(), createdAt: + new Date()});                
               });
           }
           else {
-            Contracts.insert({costumer:proposal.costumer, provider: proposal.provider,
+            Contracts.insert({proposalId: pid, costumer:proposal.costumer, provider: proposal.provider,
                   contdoc: generateHash(), contprinc: princ.id, state:"c_created",
                 createdBy: Meteor.userId(), createdAt: + new Date()});
           }
