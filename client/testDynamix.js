@@ -352,13 +352,19 @@ if (Meteor.isClient) {
                   princ = checkSharedPrincipalExists(Meteor.user().username, costumer.username, "contract");
                   Contracts.insert({proposalId: pid, costumer:proposal.costumer, provider: proposal.provider,
                     contdoc: generateHash(), contprinc: princ.id, state:"c_created",
-                  createdBy: Meteor.userId(), createdAt: + new Date()});                
+                  createdBy: Meteor.userId(), createdAt: + new Date()},
+                    function(error,id) {
+                      alert("Contract " + id + " generated.");
+                    });                
               });
           }
           else {
             Contracts.insert({proposalId: pid, costumer:proposal.costumer, provider: proposal.provider,
                   contdoc: generateHash(), contprinc: princ.id, state:"c_created",
-                createdBy: Meteor.userId(), createdAt: + new Date()});
+                createdBy: Meteor.userId(), createdAt: + new Date()},
+                function(error,id) {
+                      alert("Contract " + id + " generated.");
+                    });
           }
 
           Meteor.call('MoveProposal', pid, 'a_gen_contract', generateHash());
