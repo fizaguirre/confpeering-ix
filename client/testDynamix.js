@@ -322,6 +322,7 @@ if (Meteor.isClient) {
 
   Template.proposals.events({
     'click .proposalAction': function(evt) {
+      evt.target.hidden = true;
       var _values  = evt.target.value.split("|");
       var _id = _values[0];
       var state = _values[1];
@@ -419,6 +420,7 @@ if (Meteor.isClient) {
 
   Template.contracts.events({
     'click .contractAction': function(evt) {
+      evt.target.hidden = true;
       var _values = evt.target.value.split("|");
       var state = _values[1];
       var _id = _values[0];
@@ -462,6 +464,7 @@ if (Meteor.isClient) {
       }
     },
     'click .verProviderSign': function(evt) {
+          //evt.target.hidden = true;
           cid = evt.target.value;
           var contract = Contracts.findOne({_id: cid});
           var signature = new Uint8Array(JSON.parse("[" + atob(contract.providerSignature) + "]"));
@@ -477,6 +480,7 @@ if (Meteor.isClient) {
           });
       },
       'click .verCostumerSign': function(evt) {
+          //evt.target.hidden = true;
           cid = evt.target.value;
           var contract = Contracts.findOne({_id: cid});
           var signature = new Uint8Array(JSON.parse("[" + atob(contract.costumerSignature) + "]"));
@@ -492,6 +496,7 @@ if (Meteor.isClient) {
           });
       },
       'click .scoreButton': function(evt) {
+        evt.target.hidden = true;
         var cid = evt.target.value;
         var score = document.getElementsByName("score_"+cid)[0];
         Scores.insert({userId: Meteor.userId(), contractId: cid, score: score.value, createdBy: Meteor.userId(), createdAt: + new Date()});
