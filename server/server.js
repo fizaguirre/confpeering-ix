@@ -12,7 +12,7 @@ Meteor.publish("offers", function(){
 	}
 	
 	ases.push(this.userId);
-	console.info("looking.. " + ases);
+	//console.info("looking.. " + ases);
 	return Offers.find({createdBy:{$in : ases}});
     //return Offers.find({createdBy:this.userId});
     //return Offers.find();

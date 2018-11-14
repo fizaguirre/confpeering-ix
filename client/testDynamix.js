@@ -322,6 +322,7 @@ if (Meteor.isClient) {
 
   Template.proposals.events({
     'click .proposalAction': function(evt) {
+      evt.target.disabled = true;
       evt.target.hidden = true;
       var _values  = evt.target.value.split("|");
       var _id = _values[0];
@@ -348,23 +349,26 @@ if (Meteor.isClient) {
           var princ = checkSharedPrincipalExists(Meteor.user().username, costumer.username, "contract");
 
           if(princ === null){
+            console.log("Creating shared principal for user " + costumer.username);
             createSharedPrincipal(Meteor.user().username, costumer.username, "contract",
               function() {
                   princ = checkSharedPrincipalExists(Meteor.user().username, costumer.username, "contract");
+                  console.log("Generating contract from proposal " + pid);
                   Contracts.insert({proposalId: pid, costumer:proposal.costumer, provider: proposal.provider,
                     contdoc: generateHash(), contprinc: princ.id, state:"c_created",
                   createdBy: Meteor.userId(), createdAt: + new Date()},
                     function(error,id) {
-                      alert("Contract " + id + " generated.");
+                      //alert("Contract " + id + " generated.");
                     });                
               });
           }
           else {
+            console.log("Generating contract from proposal " + pid);
             Contracts.insert({proposalId: pid, costumer:proposal.costumer, provider: proposal.provider,
                   contdoc: generateHash(), contprinc: princ.id, state:"c_created",
                 createdBy: Meteor.userId(), createdAt: + new Date()},
                 function(error,id) {
-                      alert("Contract " + id + " generated.");
+                      //alert("Contract " + id + " generated.");
                     });
           }
 
@@ -395,7 +399,7 @@ if (Meteor.isClient) {
   Template.contracts.evaluated = function(cid) {
     var score = null;
     score = Scores.findOne({contractId: cid, userId: Meteor.userId()});
-    console.log("cid" + cid + "user " + Meteor.userId());
+    //console.log("cid" + cid + "user " + Meteor.userId());
     if(score === undefined) {
       return false;
     }
@@ -403,7 +407,7 @@ if (Meteor.isClient) {
   }
 
   Template.contracts.scores = function(cid) {
-    console.log("cid " + cid + " user " + Meteor.userId());
+    //console.log("cid " + cid + " user " + Meteor.userId());
     return Scores.findOne({contractId: cid, userId: Meteor.userId()});
   }
 
@@ -420,6 +424,7 @@ if (Meteor.isClient) {
 
   Template.contracts.events({
     'click .contractAction': function(evt) {
+      evt.target.disabled = true;
       evt.target.hidden = true;
       var _values = evt.target.value.split("|");
       var state = _values[1];
@@ -464,6 +469,7 @@ if (Meteor.isClient) {
       }
     },
     'click .verProviderSign': function(evt) {
+          evt.target.disabled = true;
           //evt.target.hidden = true;
           cid = evt.target.value;
           var contract = Contracts.findOne({_id: cid});
@@ -480,6 +486,7 @@ if (Meteor.isClient) {
           });
       },
       'click .verCostumerSign': function(evt) {
+          evt.target.disabled = true;
           //evt.target.hidden = true;
           cid = evt.target.value;
           var contract = Contracts.findOne({_id: cid});
