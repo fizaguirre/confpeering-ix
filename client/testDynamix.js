@@ -4,7 +4,8 @@ function ferr(e)
 }
 
 function generateHash() {
-  return Math.random().toString(36).substring(7);
+  //return Math.random().toString(36).substring(7);
+  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }
 
 var searchKey = '';
@@ -111,23 +112,23 @@ if (Meteor.isClient) {
       evt.preventDefault();
 
 
-      _aspath = evt.target.aspath.value;
-      _bwidth = evt.target.bwidth.value;
-      _latency = evt.target.latency.value;
-      _pkt_loss = evt.target.pkt_loss.value;
-      _jitter = evt.target.jitter.value;
-      _repair = evt.target.repair.value;
-      _guarantee = evt.target.guarantee.value;
-      _availability = evt.target.availability.value;
-      _billing = evt.target.billing.value;
-      _ingress = evt.target.ingress.value;
-      _egress = evt.target.egress.value;
-      _lengh = evt.target.lengh.value;
+      var _aspath = evt.target.aspath.value;
+      var _bwidth = evt.target.bwidth.value;
+      var _latency = evt.target.latency.value;
+      var _pkt_loss = evt.target.pkt_loss.value;
+      var _jitter = evt.target.jitter.value;
+      var _repair = evt.target.repair.value;
+      var _guarantee = evt.target.guarantee.value;
+      var _availability = evt.target.availability.value;
+      var _billing = evt.target.billing.value;
+      var _ingress = evt.target.ingress.value;
+      var _egress = evt.target.egress.value;
+      var _lengh = evt.target.lengh.value;
       
-      _signature = null;
+      var _signature = null;
 
-      _userId = Meteor.userId();
-      _createdAt = '';
+      var _userId = Meteor.userId();
+      var _createdAt = '';
 
       //Meteor.call('getServerTime', function(e, r) { _createdAt = r; });
 
@@ -157,7 +158,7 @@ if (Meteor.isClient) {
 
                           getUserPrivateKey().then(function(_pk) {
                             signDocument(_pk,_offerId).then(function(signedDoc) {
-                              buffer = new Uint8Array(signedDoc);
+                              var buffer = new Uint8Array(signedDoc);
                               Signatures.insert({userId: Meteor.userId(), docId:_offerId, signature: btoa(buffer),
                                                 createdBy: Meteor.userId(), createdAt: + new Date()},
                                                 function() {
@@ -187,7 +188,7 @@ if (Meteor.isClient) {
     'submit form': function(evt) {
       evt.preventDefault();
 
-      partnerUserId = Meteor.users.findOne({username: evt.target.as_share.value});
+      var partnerUserId = Meteor.users.findOne({username: evt.target.as_share.value});
 
       if(partnerUserId) {
         Principal.lookup([new PrincAttr("as", "as_" + Meteor.user().username + "_offers")],
@@ -241,9 +242,9 @@ if (Meteor.isClient) {
     'click .sendProposal': function(evt) {
       evt.preventDefault();
 
-      proposalDoc = generateHash();
+      var proposalDoc = generateHash();
 
-      offer = Offers.findOne({_id: evt.target.value});
+      var offer = Offers.findOne({_id: evt.target.value});
       var user02 = Meteor.users.findOne({_id: offer.createdBy});
       // Proposals.insert({costumer: Meteor.userId(), provider: offer.createdBy, offer_id: offer._id,
       //                   propdoc: proposalDoc, state: "p_open"});
@@ -306,7 +307,7 @@ if (Meteor.isClient) {
   };
 
   Template.proposals.actions = function(pid) {
-    proposal = Proposals.findOne({_id:pid});
+    var proposal = Proposals.findOne({_id:pid});
     
     if(Meteor.userId() == proposal.costumer) {
       return WorkflowActions.find({$and: [{who:"costumer"}, {statecod:proposal.state}]});
@@ -342,7 +343,7 @@ if (Meteor.isClient) {
           break;
         case 'a_gen_contract':
           console.log("call a_gen_contract");
-          pid = _id;
+          var pid = _id;
           var proposal = Proposals.findOne({_id: pid});
           var costumer = Meteor.users.findOne({_id: proposal.costumer});
 
@@ -353,12 +354,12 @@ if (Meteor.isClient) {
             createSharedPrincipal(Meteor.user().username, costumer.username, "contract",
               function() {
                   princ = checkSharedPrincipalExists(Meteor.user().username, costumer.username, "contract");
-                  console.log("Generating contract from proposal " + pid);
+                  console.log("Generating contract from proposal " + pid + " customer " + proposal.costumer + " provider "+ proposal.provider);
                   Contracts.insert({proposalId: pid, costumer:proposal.costumer, provider: proposal.provider,
                     contdoc: generateHash(), contprinc: princ.id, state:"c_created",
                   createdBy: Meteor.userId(), createdAt: + new Date()},
                     function(error,id) {
-                      //alert("Contract " + id + " generated.");
+                      //alert("Principal contract generated. Contract " + id + " generated.");
                     });                
               });
           }
@@ -412,7 +413,7 @@ if (Meteor.isClient) {
   }
 
   Template.contracts.actions = function(pid) {
-    contract = Contracts.findOne({_id:pid});
+    var contract = Contracts.findOne({_id:pid});
     
     if(Meteor.userId() == contract.costumer) {
       return WorkflowActions.find({$and: [{who:"costumer"}, {statecod:contract.state}]});
@@ -432,7 +433,7 @@ if (Meteor.isClient) {
 
       switch(state) {
         case 'a_contract_send':
-          cid = _id;
+          var cid = _id;
           getUserPrivateKey().then(function(_pk) {
           var contract = Contracts.findOne({_id: cid});
           signDocument(_pk, contract.contdoc).then(function(signedDoc) {
@@ -444,7 +445,7 @@ if (Meteor.isClient) {
           Meteor.call('MoveContract', cid, 'a_contract_send');
           break;
         case 'a_sign_contract':
-          cid = _id;
+          var cid = _id;
           getUserPrivateKey().then(function(_pk) {
             var contract = Contracts.findOne({_id: cid});
             signDocument(_pk, contract.contdoc).then(function(signedDoc) {
@@ -456,14 +457,14 @@ if (Meteor.isClient) {
           Meteor.call('MoveContract', cid, 'a_sign_contract');
           break;
         case 'a_reject_signature':
-          pid = _id;
+          var pid = _id;
           Meteor.call('MoveContract', pid, 'a_reject_signature');
         case 'a_reject_contract':
-          pid = _id;
+          var pid = _id;
           Meteor.call('MoveContract', pid, 'a_reject_contract');
           break;
         case 'a_register_contract':
-          pid = _id;
+          var pid = _id;
           Meteor.call('MoveContract', pid, 'a_register_contract');
           break;
       }
@@ -471,7 +472,7 @@ if (Meteor.isClient) {
     'click .verProviderSign': function(evt) {
           evt.target.disabled = true;
           //evt.target.hidden = true;
-          cid = evt.target.value;
+          var cid = evt.target.value;
           var contract = Contracts.findOne({_id: cid});
           var signature = new Uint8Array(JSON.parse("[" + atob(contract.providerSignature) + "]"));
           getUserPublicKey(contract.provider).then(function(upubk) {
@@ -488,7 +489,7 @@ if (Meteor.isClient) {
       'click .verCostumerSign': function(evt) {
           evt.target.disabled = true;
           //evt.target.hidden = true;
-          cid = evt.target.value;
+          var cid = evt.target.value;
           var contract = Contracts.findOne({_id: cid});
           var signature = new Uint8Array(JSON.parse("[" + atob(contract.costumerSignature) + "]"));
           getUserPublicKey(contract.costumer).then(function(upubk) {
@@ -554,7 +555,7 @@ function ab2str(ab) {
 }
 
 function genUserKeyPair() {
-  userKeys = null
+  var userKeys = null
 
   return window.crypto.subtle.generateKey(
   {
@@ -576,7 +577,7 @@ function signDocument(_pk, data) {
 }
 
 function verifyDocumentSignature(_pubk, signature, data) {
-  _data = str2ab(data);
+  var _data = str2ab(data);
   return window.crypto.subtle.verify({name:"ECDSA", hash: {name: "SHA-256"}}, _pubk, signature, _data);
 }
 
