@@ -234,7 +234,7 @@
 	<table border=1 id="proposalsTable">
 		<tr>
 			<th><label>id</label></th>
-			<th><label>Costumer</label></th>
+			<th><label>Customer</label></th>
 			<th><label>Provider</label></th>
 			<th><label>Offer</label></th>
 			<th><label>Proposal</label></th>
@@ -275,9 +275,10 @@
 		<tr>
 			<th><label>id</label></th>
 			<th><label>Proposal</label></th>
-			<th><label>Costumer</label></th>
+			<th><label>Customer</label></th>
 			<th><label>Provider</label></th>
 			<th><label>Contract</label></th>
+			<th><label>CreatedAt</label></th>
 			<th><label>Provider Signature</label></th>
 			<th><label>Costumer Signature</label></th>
 			<th><label>State</label></th>
@@ -291,6 +292,7 @@
 			<td>{{costumer}}</td>
 			<td>{{provider}}</td>
 			<td>{{contdoc}}</td>
+			<td>{{createdAt}}</td>
 			{{#if providerSignature}}
 				<td><button value={{_id}} class="verProviderSign">Verify Provider Signature</button></td>
 			{{else}}

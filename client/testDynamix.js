@@ -302,7 +302,7 @@ if (Meteor.isClient) {
 
   Template.proposals.proposal = function() {
     //return Proposals.find({$or: [{costumer : Meteor.userId()}, {provider : Meteor.userId()}]});
-    return Proposals.find();
+    return Proposals.find({},{sort: { createdAt: -1}, limit: 50});
     //return Offers.find();
   };
 
@@ -381,7 +381,7 @@ if (Meteor.isClient) {
 
   Template.contracts.contract = function() {
     //return Proposals.find({$or: [{costumer : Meteor.userId()}, {provider : Meteor.userId()}]});
-    return Contracts.find();
+    return Contracts.find({},{sort: { createdAt: -1}, limit: 50});
     //return Offers.find();
   };
 
