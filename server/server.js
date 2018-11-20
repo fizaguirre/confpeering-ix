@@ -35,7 +35,8 @@ Meteor.publish("workflowactions", function() {
 });
 
 Meteor.publish("proposals", function() {
-	return Proposals.find({$or: [{provider: this.userId}, {costumer: this.userId}]}, {sort: { createdAt: -1}, limit: 50});
+	//return Proposals.find({$or: [{provider: this.userId}, {costumer: this.userId}]}, {sort: { createdAt: -1}, limit: 50});
+	return Proposals.find({$or: [{provider: this.userId}, {costumer: this.userId}]});
 });
 
 /*Meteor.publish("costumer_proposals", function() {
@@ -43,7 +44,8 @@ Meteor.publish("proposals", function() {
 });*/
 
 Meteor.publish("contracts", function() {
-	return Contracts.find({$or: [{provider: this.userId}, {costumer: this.userId}]}, {sort: { createdAt: -1}, limit: 50});
+	//return Contracts.find({$or: [{provider: this.userId}, {costumer: this.userId}]}, {sort: { createdAt: -1}, limit: 50});
+	return Contracts.find({$or: [{provider: this.userId}, {costumer: this.userId}]});
 });
 
 Meteor.publish("asinfo", function() {

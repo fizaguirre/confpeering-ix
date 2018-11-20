@@ -302,8 +302,9 @@ if (Meteor.isClient) {
 
   Template.proposals.proposal = function() {
     //return Proposals.find({$or: [{costumer : Meteor.userId()}, {provider : Meteor.userId()}]});
-    return Proposals.find({},{sort: { createdAt: -1}, limit: 50});
     //return Offers.find();
+    //return Proposals.find({},{sort: { createdAt: -1}, limit: 50});
+    return Proposals.find({});
   };
 
   Template.proposals.actions = function(pid) {
@@ -381,8 +382,9 @@ if (Meteor.isClient) {
 
   Template.contracts.contract = function() {
     //return Proposals.find({$or: [{costumer : Meteor.userId()}, {provider : Meteor.userId()}]});
-    return Contracts.find({},{sort: { createdAt: -1}, limit: 50});
     //return Offers.find();
+    //return Contracts.find({},{sort: { createdAt: -1}, limit: 50});
+    return Contracts.find({});
   };
 
   Template.contracts.states = function(state_cod) {
@@ -506,7 +508,8 @@ if (Meteor.isClient) {
       'click .scoreButton': function(evt) {
         evt.target.hidden = true;
         var cid = evt.target.value;
-        var score = document.getElementsByName("score_"+cid)[0];
+        //var score = document.getElementsByName("score_"+cid)[0];
+        var score = document.getElementById("score_"+cid);
         Scores.insert({userId: Meteor.userId(), contractId: cid, score: score.value, createdBy: Meteor.userId(), createdAt: + new Date()});
       }
   });

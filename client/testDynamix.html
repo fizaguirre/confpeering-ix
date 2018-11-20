@@ -258,7 +258,7 @@
 					{{#each actions _id}}
 					<tr>
 						<td>
-							<button value="{{../_id}}|{{cod}}" class="proposalAction" name="{{cod}}_{{../_id}}">{{desc}}</button>
+							<button name="{{cod}}" value="{{../_id}}|{{cod}}" class="proposalAction" id="{{cod}}_{{../_id}}">{{desc}}</button>
 						</td>
 					</tr>
 					{{/each}}
@@ -311,7 +311,7 @@
 					{{#each actions _id}}
 					<tr>
 						<td>
-							<button name="{{cod}}_{{../_id}}" value="{{../_id}}|{{cod}}" class="contractAction">{{desc}}</button>
+							<button id="{{cod}}_{{../_id}}" name="{{cod}}" value="{{../_id}}|{{cod}}" class="contractAction">{{desc}}</button>
 						</td>
 					</tr>
 					{{/each}}
@@ -323,8 +323,10 @@
 				{{/with}}
 			{{else}}
 				{{#if isRegistered state}}
-					<td><input type="number" min="0" max="5" name="score_{{_id}}" class="score_input_number">
-						<button name="score_button_{{_id}}" value="{{_id}}" class="scoreButton">Ok</button></td>
+					<td>
+						<input name="{{cod}}" type="number" min="0" max="5" id="score_{{_id}}" class="score_input_number">
+						<button name="{{cod}}" id="score_button_{{_id}}" value="{{_id}}" class="scoreButton">Ok</button>
+					</td>
 				{{/if}}
 			{{/if}}
 		</tr>
