@@ -35,7 +35,7 @@ Meteor.publish("workflowactions", function() {
 });
 
 Meteor.publish("proposals", function() {
-	//return Proposals.find({$or: [{provider: this.userId}, {costumer: this.userId}]}, {sort: { createdAt: -1}, limit: 50});
+	//return Proposals.find({$or: [{provider: this.userId}, {costumer: this.userId}]}, {sort: { createdAt: -1}, limit: 10});
 	return Proposals.find({$or: [{provider: this.userId}, {costumer: this.userId}]});
 });
 
@@ -44,7 +44,7 @@ Meteor.publish("proposals", function() {
 });*/
 
 Meteor.publish("contracts", function() {
-	//return Contracts.find({$or: [{provider: this.userId}, {costumer: this.userId}]}, {sort: { createdAt: -1}, limit: 50});
+	//return Contracts.find({$or: [{provider: this.userId}, {costumer: this.userId}]}, {sort: { createdAt: -1}, limit: 10});
 	return Contracts.find({$or: [{provider: this.userId}, {costumer: this.userId}]});
 });
 
@@ -112,7 +112,13 @@ Meteor.methods({
 				console.log('a_gen_contract');
 				// Contracts.insert({costumer:proposal.costumer, provider: proposal.provider,
 				// 					contdoc: option, state:"c_created"});
-				Proposals.update({_id: proposal._id}, {$set: {state:action.nextstatecod}});
+				try{
+					Proposals.update({_id: proposal._id}, {$set: {state:action.nextstatecod}});	
+				}
+				catch(err)
+				{
+					console.log("Failed to update proposal "+ pid)
+				}
 				break;
 			default:
 				console.log("proposal default");
@@ -126,7 +132,12 @@ Meteor.methods({
 
 		switch(action.cod) {
 			default:
-				Contracts.update({_id: contract._id}, {$set: {state:action.nextstatecod}});
+				try {
+					Contracts.update({_id: contract._id}, {$set: {state:action.nextstatecod}});	
+				}
+				catch(err) {
+					console.log("Failed to update contract "+ pid)
+				}
 				break;
 		}
 	}

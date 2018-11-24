@@ -303,7 +303,7 @@ if (Meteor.isClient) {
   Template.proposals.proposal = function() {
     //return Proposals.find({$or: [{costumer : Meteor.userId()}, {provider : Meteor.userId()}]});
     //return Offers.find();
-    //return Proposals.find({},{sort: { createdAt: -1}, limit: 50});
+    //return Proposals.find({},{sort: { createdAt: 1}});
     return Proposals.find({});
   };
 
@@ -383,7 +383,7 @@ if (Meteor.isClient) {
   Template.contracts.contract = function() {
     //return Proposals.find({$or: [{costumer : Meteor.userId()}, {provider : Meteor.userId()}]});
     //return Offers.find();
-    //return Contracts.find({},{sort: { createdAt: -1}, limit: 50});
+    //return Contracts.find({},{sort: { createdAt: 1}});
     return Contracts.find({});
   };
 
@@ -601,19 +601,24 @@ function createSharedPrincipal(user1, user2, type, cb) {
 
   Principal.create(type, user1 +"_"+ user2 +"_"+ type, Principal.user(), ferr);
 
-  Principal.lookup([new PrincAttr(type, user1 +"_"+ user2 +"_"+ type)],
-                    Meteor.user().username,
-                    function(sharedPrincipal) {
-                      Principal.lookupUser(user2,
-                        function(userPrincipal) {
-                          Principal.add_access(userPrincipal, sharedPrincipal,
-                            function() {
-                              console.log("Access granted");
-                              cb();
-                            })
-                        })
-                    });
+  try{
 
+    Principal.lookup([new PrincAttr(type, user1 +"_"+ user2 +"_"+ type)],
+                      Meteor.user().username,
+                      function(sharedPrincipal) {
+                        Principal.lookupUser(user2,
+                          function(userPrincipal) {
+                            Principal.add_access(userPrincipal, sharedPrincipal,
+                              function() {
+                                console.log("Access granted");
+                                cb();
+                              })
+                          })
+                      });
+  }
+  catch(err) {
+    console.log(err);
+  }
 }
 
 function checkSharedPrincipalExists(user1, user2, type) {
