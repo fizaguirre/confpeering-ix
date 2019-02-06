@@ -15,13 +15,13 @@ ___
 
 1. Download and follow the instructions on how to setup Mylar at https://css.csail.mit.edu/mylar/.
 2. To run the application.
-..1. On the CONFPEERING-IX project folder run:
-..2.
+  1. On the CONFPEERING-IX project folder run:
+  2.
 ```shell
 <path_to_meteor>/meteor
 ```
 3. To reset the database run:
-..1.
+  1.
 ```shell
 <path_to_meteor>/meteor reset
 ```
