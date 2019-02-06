@@ -3,6 +3,10 @@ function ferr(e)
   console.log(e);
 }
 
+
+/*
+Generate a hash to simulate the the contrat or proposals.
+*/
 function generateHash() {
   //return Math.random().toString(36).substring(7);
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -10,8 +14,12 @@ function generateHash() {
 
 var searchKey = '';
 
+/*
+Code to be executed in the client side.
+*/
 if (Meteor.isClient) {
 
+  //Subscribe to the following collections.
   Deps.autorun(function(){
     Meteor.subscribe('offers');
     Meteor.subscribe('users');
@@ -30,6 +38,7 @@ if (Meteor.isClient) {
     return "Welcome to testDynamix.";
   };
 
+  //Logout event
   Template.hello.events({
     'click input' : function () {
       // template data, if any, is available in 'this'
@@ -47,6 +56,15 @@ if (Meteor.isClient) {
     }
   });
 
+  /*
+  
+  Event to process the user registration
+
+  It first collect the user data from the form.
+  It then pass those values to the function Accounts.create user and wait for the server response.
+  It also creates a cryptography key pair for signing documents.
+
+  */
   Template.register.events({
     'submit form': function(evt) {
       evt.preventDefault();
@@ -66,6 +84,7 @@ if (Meteor.isClient) {
           console.log(Meteor.user());
           Principal.create("as","as_" + Meteor.user().username + "_offers", Principal.user(), ferr);
 
+          //Generate and store in the database the user key pair.
           genUserKeyPair().then(function(k) {
 
             window.crypto.subtle.exportKey("jwk", k.privateKey).then(
@@ -90,6 +109,7 @@ if (Meteor.isClient) {
     }
   });
 
+  //Loggin event
   Template.login.events({
     'submit form': function(evt) {
       evt.preventDefault();
@@ -107,6 +127,12 @@ if (Meteor.isClient) {
     }
   });
 
+  /*
+
+  These event is called once the user fills the offer form and submit it to the server.
+  The function bellow takes the values provided in the form and stores it in the server.
+
+  */
   Template.registerAnOffer.events({
     'submit form': function(evt) {
       evt.preventDefault();
@@ -132,6 +158,14 @@ if (Meteor.isClient) {
 
       //Meteor.call('getServerTime', function(e, r) { _createdAt = r; });
 
+      /*
+
+      To register an offer it first lookup to find the principle to be used to cipher the offer document
+      that is going to be stored in the database.
+      It then inserts the offer in the database in the Offers collection, sign it and store the signature in the Signatures collection.
+
+      */
+
       Principal.lookup([new PrincAttr("as", "as_" + Meteor.user().username + "_offers")],
                         Meteor.user().username,
                         function(userPrincipal) {
@@ -153,9 +187,12 @@ if (Meteor.isClient) {
                             createdBy: _userId,
                             createdAt: + new Date() };
 
+
+                          //Insert the offer in the database
                           var _offerId = Offers.insert(_offer);
                           var _offerRegister = Offers.findOne({_id: _offerId});
 
+                          //Sign the offer and insert the signature in the database
                           getUserPrivateKey().then(function(_pk) {
                             signDocument(_pk,_offerId).then(function(signedDoc) {
                               var buffer = new Uint8Array(signedDoc);
@@ -184,11 +221,28 @@ if (Meteor.isClient) {
     }
   });
 
+  /*
+
+  The event bellow process the share offer feature.
+  To share an offer, the one that is sharing the offer must provide the username of the user
+  that should have access to the specific offer.
+  It uses the Principal.add_access function to share the offer with another user.
+
+  */
   Template.shareOffers.events({
     'submit form': function(evt) {
       evt.preventDefault();
 
       var partnerUserId = Meteor.users.findOne({username: evt.target.as_share.value});
+
+      /*
+
+      To share an offer it perform the following actions:
+      1) Lookup for the user principal that is going to have access to the offer.
+      2) Lookup for the principal that is sharing the offer.
+      3) With the above information executes the function Principal.add_access().
+
+      */
 
       if(partnerUserId) {
         Principal.lookup([new PrincAttr("as", "as_" + Meteor.user().username + "_offers")],
@@ -221,6 +275,7 @@ if (Meteor.isClient) {
     console.log("search happend");
   }
 
+  // Show searched offers
   Template.searchOffersResult.offersResult = function() {
     var search_tag = Session.get("search_tag");
     if(search_tag) {    
@@ -229,6 +284,7 @@ if (Meteor.isClient) {
     return Offers.find({_tag: "nothing"});
   }
 
+  //Search for offers
   Template.searchOffers.events({
     'submit form': function(evt) {
       evt.preventDefault();
@@ -238,7 +294,20 @@ if (Meteor.isClient) {
     }
   });
 
+  /*
+
+  The following events process the action of sending a proposal to an user and verify its signature.
+
+  */
   Template.searchOffersResult.events({
+    /*
+  
+    Sending a proposal to a user is to add a register in the database shared with the intended user.
+    First the user that is sending the proposal creates a document with the proposal and inserts
+    it  into the database. Then, it shares this document with the intended user. For that to take place
+    it creates a shared principle with the user that intents to send the proposal.
+
+    */
     'click .sendProposal': function(evt) {
       evt.preventDefault();
 
@@ -295,11 +364,13 @@ if (Meteor.isClient) {
     }
   });
 
+  //Get offers that the user has access.
   Template.offer.offers = function() {
     return Offers.find({createdBy:Meteor.userId()});
     //return Offers.find();
   };
 
+  //Get the proposals available to the user.
   Template.proposals.proposal = function() {
     //return Proposals.find({$or: [{costumer : Meteor.userId()}, {provider : Meteor.userId()}]});
     //return Offers.find();
@@ -307,6 +378,11 @@ if (Meteor.isClient) {
     return Proposals.find({});
   };
 
+  /*
+  The function bellow check which actions are available to the current user.
+  If the user is a costumer it can send proposals and verify it's status.
+  If the user is a provider it can accept proposals and generate contracts from that.
+  */
   Template.proposals.actions = function(pid) {
     var proposal = Proposals.findOne({_id:pid});
     
@@ -318,10 +394,18 @@ if (Meteor.isClient) {
     }
   };
 
+  //Get the proposal state
   Template.proposals.states = function(state_cod) {
     return ProposalStates.findOne({cod:state_cod});
   };
 
+  /*
+    The proposalAction event handles the transition from one state to another.
+    The actions can be as follows:
+      a_accept_proposal: Accepts a proposal.
+      a_reject_proposal: Rejects a proposal.
+      a_gen_contract: Generate a contract from an accepted proposal.
+  */
   Template.proposals.events({
     'click .proposalAction': function(evt) {
       evt.target.disabled = true;
@@ -380,6 +464,7 @@ if (Meteor.isClient) {
     }
   });
 
+  //Get the contracts available for the current user.
   Template.contracts.contract = function() {
     //return Proposals.find({$or: [{costumer : Meteor.userId()}, {provider : Meteor.userId()}]});
     //return Offers.find();
@@ -387,6 +472,7 @@ if (Meteor.isClient) {
     return Contracts.find({});
   };
 
+  //Get the state of a contract given its code.
   Template.contracts.states = function(state_cod) {
     return ContractStates.findOne({cod:state_cod});
   };
@@ -399,6 +485,7 @@ if (Meteor.isClient) {
     return false;
   }
 
+  //Return true if a contract has been evaluted. Otherwise returns false.
   Template.contracts.evaluated = function(cid) {
     var score = null;
     score = Scores.findOne({contractId: cid, userId: Meteor.userId()});
@@ -409,11 +496,13 @@ if (Meteor.isClient) {
     return true;
   }
 
+  //Get the score of a given contract.
   Template.contracts.scores = function(cid) {
     //console.log("cid " + cid + " user " + Meteor.userId());
     return Scores.findOne({contractId: cid, userId: Meteor.userId()});
   }
 
+  //Get the actions available for a contract.
   Template.contracts.actions = function(pid) {
     var contract = Contracts.findOne({_id:pid});
     
@@ -425,6 +514,15 @@ if (Meteor.isClient) {
     }
   };
 
+  /*
+    The contractAction event handles the transition of contracts from one state to another.
+    The actions can be as follows:
+      a_contract_send: Send the contract to the costumer.
+      a_sign_contract: Sign the contract.
+      a_reject_signature: Reject a contract signature.
+      a_reject_contract: Reject a contract.
+      a_register_contract: Register a contract in the database.
+  */
   Template.contracts.events({
     'click .contractAction': function(evt) {
       evt.target.disabled = true;
@@ -514,6 +612,7 @@ if (Meteor.isClient) {
       }
   });
 
+  //Get the list of agreements an user has been enrolled.
   Template.history.events({
     'click #find_as_history': function(evt) {
       var as_value = document.getElementById("as_history_user_iput");
@@ -521,6 +620,7 @@ if (Meteor.isClient) {
     }
   });
 
+  //Get a list of scores from contracts an user has been enrolled.
   Template.feedbakHistory.feedback = function() {
     var as = Session.get("as_lookup");
 
@@ -557,6 +657,8 @@ function ab2str(ab) {
   return String.fromCharCode.apply(null, ab);
 }
 
+
+//Generate public/private key pair
 function genUserKeyPair() {
   var userKeys = null
 
@@ -573,29 +675,34 @@ function genUserKeyPair() {
   });
 }
 
+//Sign the document digitally.
 function signDocument(_pk, data) {
   return getUserPrivateKey().then(function(_pk) {
     return window.crypto.subtle.sign({name:"ECDSA", hash: {name: "SHA-256"}}, _pk, str2ab(data));
   })
 }
 
+//Given a document, verify its signature.
 function verifyDocumentSignature(_pubk, signature, data) {
   var _data = str2ab(data);
   return window.crypto.subtle.verify({name:"ECDSA", hash: {name: "SHA-256"}}, _pubk, signature, _data);
 }
 
+//Given an user ID get its public key.
 function getUserPublicKey(uid) {
     var userPubK = ASInfo.findOne({userId: uid});
     return window.crypto.subtle.importKey("jwk", JSON.parse(userPubK.pubk),
       { name: "ECDSA", namedCurve: "P-256" }, true, ["verify"]);
 }
 
+//Get the user private key for the current user.
 function getUserPrivateKey() {
   var userPK = ASPrivateInfo.findOne({userId: Meteor.userId()});
   return window.crypto.subtle.importKey("jwk", JSON.parse(userPK.pk),
     { name: "ECDSA", namedCurve: "P-256" }, true, ["sign"]);
 }
 
+//Create a principle shared with two users
 function createSharedPrincipal(user1, user2, type, cb) {
   //Principal.create("as","as_" + Meteor.user().username + "_offers", Principal.user(), ferr);
 
@@ -621,6 +728,7 @@ function createSharedPrincipal(user1, user2, type, cb) {
   }
 }
 
+//Check if a principle shared between two users already exist.
 function checkSharedPrincipalExists(user1, user2, type) {
   var princ = null;
   try{

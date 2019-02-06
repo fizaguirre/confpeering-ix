@@ -1,3 +1,7 @@
+/*
+  This file defines the data structures used in this prototype.
+*/
+
 Offers = new Meteor.Collection('offers');
 Ases   = new Meteor.Collection('ases');
 ProposalStates = new Meteor.Collection('proposalstates');

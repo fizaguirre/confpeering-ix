@@ -1,3 +1,4 @@
+//Collections to store offers.
 Meteor.publish("offers", function(){
 	//db.ases.find({ "as_id": { $in: ["1","2"] } } );
 	var ases = [];
@@ -18,22 +19,27 @@ Meteor.publish("offers", function(){
     //return Offers.find();
   });
 
+//Collections to store users.
 Meteor.publish("users", function() { 
   return Meteor.users.find({}, {fields: {}});
 });
 
+//Collections to store the logical states that are going to be use in proposals.
 Meteor.publish("proposalstates", function() {
 	return ProposalStates.find({});
 });
 
+//Collections to store the logical states that are going to be use in contracts.
 Meteor.publish("contractstates", function() {
 	return ContractStates.find({});
 });
 
+//Collections to store the logical actions that are going to be used in proposals and contracts transitions.
 Meteor.publish("workflowactions", function() {
 	return WorkflowActions.find({});
 });
 
+//Collection to store proposals registers.
 Meteor.publish("proposals", function() {
 	//return Proposals.find({$or: [{provider: this.userId}, {costumer: this.userId}]}, {sort: { createdAt: -1}, limit: 10});
 	return Proposals.find({$or: [{provider: this.userId}, {costumer: this.userId}]});
@@ -43,23 +49,28 @@ Meteor.publish("proposals", function() {
 	return Proposals.find({costumer: this.userId});
 });*/
 
+//Collection to store contracts registers.
 Meteor.publish("contracts", function() {
 	//return Contracts.find({$or: [{provider: this.userId}, {costumer: this.userId}]}, {sort: { createdAt: -1}, limit: 10});
 	return Contracts.find({$or: [{provider: this.userId}, {costumer: this.userId}]});
 });
 
+//Collection to store AS data registers.
 Meteor.publish("asinfo", function() {
 	return ASInfo.find();
 });
 
+//Collection to store private AS data registers.
 Meteor.publish("asprivateinfo", function() {
 	return ASPrivateInfo.find({userId: this.userId});
 });
 
+//Collection to store AS documents signatures registers.
 Meteor.publish("signatures", function() {
 	return Signatures.find({});
 });
 
+//Collection to store AS score registers.
 Meteor.publish("scores", function() {
 	return Scores.find({});
 })
@@ -68,6 +79,15 @@ Meteor.publish("scores", function() {
 	return Contracts.find({costumer: this.userId});
 });*/
 
+
+/*
+	Methods used to handle transition atctions for proposals and contracts.
+	The methods are defined as follows:
+		ShareOffers: Given an offer id and a user id, share the offer with the user provided.
+		GetProposalActions: Return the validate actions related to a proposal.
+		MoveProposal: Given a proposal ID and its action code, move its status to the new one.
+		MoveContract: Given a contract ID and its action code, move its status to the new one.
+*/
 Meteor.methods({
 	'ShareOffers': function(asIDOferer, asIDClient) {
 		//db.ases.update({as_id:5}, {$push:{as_oferers:2} }, {upsert:true});
@@ -143,5 +163,6 @@ Meteor.methods({
 	}
 });
 
+//Environment variables to ignore SSL certificate validation.
 process.env.NODE_TLS_REJECT_UNAUTHORIZED="0";
 console.log("NODE TLS "+process.env.NODE_TLS_REJECT_UNAUTHORIZED)
