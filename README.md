@@ -31,7 +31,7 @@ CONFPEERING-IX is build on top of Mylar, that in the version available at the ti
 # Aditional notes about the setup
 
 ## Project structure
-The project has two components. The CONPEERING-IX application that runs in top of Mylar and a Web Server acting as a proxy server for HTTPS termination. The Web Server stands in front of the CONFPEERING-IX application and handle the HTTPS encryption between client and server.
+The project has two components. The CONPEERING-IX application that runs in top of Mylar and a web server acting as a proxy server for HTTPS termination. The web server stands in front of the CONFPEERING-IX application and handle the HTTPS encryption between client and server.
 
 Client <-> Apache 2.2.22 <-> CONFPEERING-IX
 
@@ -40,7 +40,7 @@ Client <-> Apache 2.2.22 <-> CONFPEERING-IX
 * **project_folder**: This folder keeps the _env.sh_, _models.js_ and _prepare.js_ files and also the client and server folders.
 The _env.sh_ file set some environment variables useful for the operation of the plataform. The _model.js_ file defines how the data is organized in the database. The _prepare.js_ file fills the database with data used by the application logic.
 * **server**: This folder keeps the files that are going to be running in the server side. The server is responsible to control the access and procedures of the application.
-* **client**: This folder keeps the files that are going to be running in the client side. The client is the interface used by the user to access the platform and perform his operations.
+* **client**: This folder keeps the files that are going to be running in the client side. The client is the interface used by the user to access the platform and perform its operations.
 
 ## Bind to another interface
 
