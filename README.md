@@ -1,6 +1,6 @@
 # CONFPEERING-IX
 
-CONFPEERING-IX is prototype of a platform that aims to improve the agreement process for ISPs to exchange traffic between themselves in an IXP environment. This is part of an academic work completion of graduation.
+CONFPEERING-IX is a prototype of a platform that aims to improve the agreement process for ISPs to exchange traffic between themselves in an IXP environment. This is part of an academic work completion of graduation.
 This prototype was developed using Mylar (https://css.csail.mit.edu/mylar/), a web framework to store, share and perform search operations in encrypted data.
 
 ### Full Undergraduate Thesis
@@ -10,7 +10,7 @@ ___
 
 # Setup
 
-CONFPEERING-IX is build on top of Mylar, that in the version available at the time of the last update of this repository, which requires some libraries that are most presented on Debian 7. All the instructions in this page assumes that you are using Debian 7 Wheezy.
+CONFPEERING-IX is build on top of Mylar, that in the version available at the time of the last update of this repository, requires some libraries that are most presented on Debian 7. All the instructions in this page assumes that you are using Debian 7 Wheezy.
 
 1. Download and follow the instructions on how to set up Mylar at https://css.csail.mit.edu/mylar/. Mylar is build on top of Meteor (more information at https://www.meteor.com/), so for simplicity the path Mylar is installed is going to be referenced as <metor_folder>.
 	
@@ -31,7 +31,7 @@ CONFPEERING-IX is build on top of Mylar, that in the version available at the ti
 # Additional notes about the setup
 
 ## Project structure
-The project has two components. The CONPEERING-IX application that runs in top of Mylar and a web server acting as a proxy server for HTTPS termination. The web server stands in front of the CONFPEERING-IX application and handle the SSL encryption between client and server.
+The project has two components. The CONPEERING-IX application that runs on top of Mylar and a web server acting as a proxy server for HTTPS termination. The web server stands in front of the CONFPEERING-IX application and handles the SSL encryption between client and server.
 
 ### Communication flow
 
