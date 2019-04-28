@@ -10,11 +10,11 @@ ___
 
 # Setup
 
-CONFPEERING-IX is build on top of Mylar, that in the version available at the time of the last update of this repository, and requires some libraries that are most presented on Debian 7. All the instructions in this page assumes that you are using Debian 7 Wheezy.
+CONFPEERING-IX is build on top of Mylar, that in the version available at the time of the last update of this repository, which requires some libraries that are most presented on Debian 7. All the instructions in this page assumes that you are using Debian 7 Wheezy.
 
 1. Download and follow the instructions on how to set up Mylar at https://css.csail.mit.edu/mylar/. Mylar is build on top of Meteor (more information at https://www.meteor.com/), so for simplicity the path Mylar is installed is going to be referenced as <metor_folder>.
 	
-	1.1. _Tip: If you are using Debian 7 as recommended here, install the following packages to run meteor: build-essential, curl, flex, bison, libgmp-dev, libntl-dev, zlib1g-dev, libreadline-dev, libssl-dev and after that download and compile [libpbc](https://crypto.stanford.edu/pbc/)._
+	1.1. _Tip: If you are using Debian 7 as recommended here, install the following packages to run meteor: build-essential, curl, flex, bison, libgmp-dev, libntl-dev, zlib1g-dev, libreadline-dev, libssl-dev. Afther that download and compile [libpbc](https://crypto.stanford.edu/pbc/)._
 
 2. Clone the CONPEERING-IX project from github.
 
