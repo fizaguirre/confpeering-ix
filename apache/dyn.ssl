@@ -3,7 +3,7 @@ Listen 8083
 <VirtualHost _default_:443>
 	ServerAdmin webmaster@localhost
 
-	ErrorLog ${APACHE_LOG_DIR}/error-dyn.log
+	ErrorLog ${APACHE_LOG_DIR}/error-cpix.log
 
 	#Proxy
 	ProxyPass "/" "http://<your_ip>:3000/"
@@ -13,7 +13,7 @@ Listen 8083
 	# alert, emerg.
 	LogLevel warn
 
-	CustomLog ${APACHE_LOG_DIR}/ssl_access-dyn.log combined
+	CustomLog ${APACHE_LOG_DIR}/ssl_access-cpix.log combined
 
 	#   SSL Engine Switch:
 	#   Enable/Disable SSL for this virtual host.
@@ -41,7 +41,7 @@ Listen 8083
 <VirtualHost *:8083>
 	ServerAdmin webmaster@localhost
 
-	ErrorLog ${APACHE_LOG_DIR}/error-dyn.log
+	ErrorLog ${APACHE_LOG_DIR}/error-cpix.log
 
 	#Proxy
 	ProxyPass "/" "http://<your_ip>:8082/"
@@ -51,7 +51,7 @@ Listen 8083
 	# alert, emerg.
 	LogLevel warn
 
-	CustomLog ${APACHE_LOG_DIR}/ssl_access-dyn.log combined
+	CustomLog ${APACHE_LOG_DIR}/ssl_access-cpix.log combined
 
 	#   SSL Engine Switch:
 	#   Enable/Disable SSL for this virtual host.

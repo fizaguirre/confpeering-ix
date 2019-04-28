@@ -1,9 +1,9 @@
 # CONFPEERING-IX
 
-CONFPEERING-IX is a plataform prototype that aims to improve the agreement process to exchange traffic between ASes in an IXP environment.
+CONFPEERING-IX is prototype if a platform that aims to improve the agreement process for ISPs to exchange traffic between themselves in an IXP environment. This is part of an academic work completion of graduation.
 This prototype was developed using Mylar (https://css.csail.mit.edu/mylar/), a web framework to store and share registers in a database in a confidetial way.
 
-### Full thesis
+### Full Undergraduate Thesis
 
 [CONFPEERING-IX](https://lume.ufrgs.br/handle/10183/193315)
 ___
@@ -31,7 +31,9 @@ CONFPEERING-IX is build on top of Mylar, that in the version available at the ti
 # Aditional notes about the setup
 
 ## Project structure
-The project has two components. The CONPEERING-IX application that runs in top of Mylar and a web server acting as a proxy server for HTTPS termination. The web server stands in front of the CONFPEERING-IX application and handle the HTTPS encryption between client and server.
+The project has two components. The CONPEERING-IX application that runs in top of Mylar and a web server acting as a proxy server for HTTPS termination. The web server stands in front of the CONFPEERING-IX application and handle the SSL encryption between client and server.
+
+### Comunication flow
 
 Client <-> Apache 2.2.22 <-> CONFPEERING-IX
 
